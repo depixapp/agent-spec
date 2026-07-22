@@ -1,0 +1,18 @@
+meta {
+  name: getMe
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/me
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{apiKey}}
+}
+
+docs {
+  Identify the authenticated merchant
+}

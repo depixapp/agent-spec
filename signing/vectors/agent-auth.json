@@ -1,0 +1,79 @@
+{
+  "_comment": "TEST-ONLY signing vectors for the DePix Ed25519 agent request-signing scheme. The keypair below is derived from a FIXED public seed and MUST NEVER be used for a real agent. See ../agent-auth.md for the normative spec. Regenerate with `node scripts/gen-vectors.mjs`.",
+  "scheme": "depix-agent-auth:v1",
+  "audience": "api.depixapp.com",
+  "canonical_string_format": "scheme \\n audience \\n METHOD \\n path \\n timestamp \\n nonce \\n sha256hex(canonical_body)   (7 lines, LF-joined, no trailing newline)",
+  "body_normalization": "null, undefined and {} -> \"\"; otherwise compact JSON.stringify(body)",
+  "test_key": {
+    "warning": "TEST-ONLY — DO NOT USE. Anyone can sign as this key; it exists only to validate implementations.",
+    "algorithm": "Ed25519 (RFC 8032)",
+    "seed_hex": "a51539186cb71299e7a2dc3ec8e0a8ae8d06d69a540c88f77a4cc9e629f41de7",
+    "seed_derivation": "sha256(\"depix-agent-spec test vector seed — DO NOT USE IN PRODUCTION\")",
+    "public_key_hex": "bc2da142490e2a638379a85e2c6eb5403c20b184edcb424ee489228889a1d20e"
+  },
+  "vectors": [
+    {
+      "name": "GET with no body — body hash is sha256(\"\")",
+      "method": "GET",
+      "path": "/api/agents/status",
+      "timestamp": "1750000000",
+      "nonce": "0a1b2c3d4e5f60718293a4b5c6d7e8f9",
+      "audience": "api.depixapp.com",
+      "body": null,
+      "canonical_body": "",
+      "body_sha256_hex": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_key_hex": "bc2da142490e2a638379a85e2c6eb5403c20b184edcb424ee489228889a1d20e",
+      "canonical_string": "depix-agent-auth:v1\napi.depixapp.com\nGET\n/api/agents/status\n1750000000\n0a1b2c3d4e5f60718293a4b5c6d7e8f9\ne3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "signature_hex": "36bde2b28dba71426129e4c1fd674a109208055baf8732d9b357b59797c08c52cf29aa06d51fe8aa927d3e8eed7e3158053825d97b7c81b7ab55fda673e11d06"
+    },
+    {
+      "name": "POST with a JSON body (agent self-onboarding)",
+      "method": "POST",
+      "path": "/api/agents/register",
+      "timestamp": "1750000123",
+      "nonce": "112233445566778899aabbccddeeff00",
+      "audience": "api.depixapp.com",
+      "body": {
+        "name": "Acme Bot",
+        "operator_token": "op_TEST_do_not_use",
+        "operator_email": "operator@example.com",
+        "liquid_address": "lq1qtestonlyaddressplaceholder"
+      },
+      "canonical_body": "{\"name\":\"Acme Bot\",\"operator_token\":\"op_TEST_do_not_use\",\"operator_email\":\"operator@example.com\",\"liquid_address\":\"lq1qtestonlyaddressplaceholder\"}",
+      "body_sha256_hex": "a07511a02905e1a2eede9989526a1685c5c2e1c431723282d043b4da7184f23d",
+      "public_key_hex": "bc2da142490e2a638379a85e2c6eb5403c20b184edcb424ee489228889a1d20e",
+      "canonical_string": "depix-agent-auth:v1\napi.depixapp.com\nPOST\n/api/agents/register\n1750000123\n112233445566778899aabbccddeeff00\na07511a02905e1a2eede9989526a1685c5c2e1c431723282d043b4da7184f23d",
+      "signature_hex": "3c52eafa9115e6972d49c86679ee31bc9ef8554877e5fdcd99f87744d5f15de979f8d19836cf64dc0b29996cd8e8e3b16e1249ca0fc9d02208f483407222f609"
+    },
+    {
+      "name": "POST with an EMPTY object body (createKey defaults) — normalizes to \"\", NOT \"{}\"",
+      "method": "POST",
+      "path": "/api/agents/keys",
+      "timestamp": "1750000456",
+      "nonce": "aabbccddeeff00112233445566778899",
+      "audience": "api.depixapp.com",
+      "body": {},
+      "canonical_body": "",
+      "body_sha256_hex": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_key_hex": "bc2da142490e2a638379a85e2c6eb5403c20b184edcb424ee489228889a1d20e",
+      "canonical_string": "depix-agent-auth:v1\napi.depixapp.com\nPOST\n/api/agents/keys\n1750000456\naabbccddeeff00112233445566778899\ne3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "signature_hex": "c7bb5b8db5eb19e8de3ac2f71f756604f34e76e1973608ce7224a4cdb0a76f06cefb08ef5a094cd8a0c0e383a867fd833f18701a99027063ce70e87b95ff9d00"
+    },
+    {
+      "name": "POST with a non-empty body (revoke a key)",
+      "method": "POST",
+      "path": "/api/agents/keys/revoke",
+      "timestamp": "1750000789",
+      "nonce": "0f1e2d3c4b5a69788796a5b4c3d2e1f0",
+      "audience": "api.depixapp.com",
+      "body": {
+        "id": "key_TEST_1"
+      },
+      "canonical_body": "{\"id\":\"key_TEST_1\"}",
+      "body_sha256_hex": "9a6beb7874f989d069b7ae162649c166e25903fc2582060116a611fd367c51f0",
+      "public_key_hex": "bc2da142490e2a638379a85e2c6eb5403c20b184edcb424ee489228889a1d20e",
+      "canonical_string": "depix-agent-auth:v1\napi.depixapp.com\nPOST\n/api/agents/keys/revoke\n1750000789\n0f1e2d3c4b5a69788796a5b4c3d2e1f0\n9a6beb7874f989d069b7ae162649c166e25903fc2582060116a611fd367c51f0",
+      "signature_hex": "323ee3bb46c333b19e932642fb686bfcf0af1c2d602dd13279a9b3efb2cb5a8c6043105fbb85ba9404d0beaa55fe49c5d70febcddf39d3c006edb1737ff3330d"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "_comment": "TEST-ONLY signing vectors for the DePix outbound-webhook signature (X-DePix-Signature). The secret below is a placeholder and MUST NEVER be used for a real merchant. See ../webhook-signature.md for the normative spec. Regenerate with `node scripts/gen-vectors.mjs`.",
+  "algorithm": "HMAC-SHA256(secret, `${t}.${payload}`) as lowercase hex",
+  "header_format": "X-DePix-Signature: t=<unix seconds>,v1=<hex hmac-sha256>",
+  "test_secret": {
+    "warning": "TEST-ONLY — DO NOT USE.",
+    "value": "whsec_test_DO_NOT_USE_agent_spec_vectors_0000"
+  },
+  "vectors": [
+    {
+      "name": "checkout.paid",
+      "timestamp": 1750000000,
+      "payload": "{\"event\":\"checkout.paid\",\"data\":{\"id\":\"chk_TEST_123\",\"status\":\"paid\",\"amount_cents\":5000,\"event_id\":\"evt_TEST_abc123\"}}",
+      "signed_string": "1750000000.{\"event\":\"checkout.paid\",\"data\":{\"id\":\"chk_TEST_123\",\"status\":\"paid\",\"amount_cents\":5000,\"event_id\":\"evt_TEST_abc123\"}}",
+      "expected_v1_hex": "9cb2cebdbd70d73f912a7661f66c8952faa33af8d626f65644427a91d30e3432",
+      "header": "t=1750000000,v1=9cb2cebdbd70d73f912a7661f66c8952faa33af8d626f65644427a91d30e3432"
+    },
+    {
+      "name": "deposit.completed",
+      "timestamp": 1750000321,
+      "payload": "{\"event\":\"deposit.completed\",\"data\":{\"id\":\"dep_TEST_456\",\"status\":\"depix_sent\",\"amount_cents\":10000,\"event_id\":\"evt_TEST_def456\"}}",
+      "signed_string": "1750000321.{\"event\":\"deposit.completed\",\"data\":{\"id\":\"dep_TEST_456\",\"status\":\"depix_sent\",\"amount_cents\":10000,\"event_id\":\"evt_TEST_def456\"}}",
+      "expected_v1_hex": "5b5b58ee66fabd97f35995d8a397ba54935bf1b4ac791a88edde2f9ea0185208",
+      "header": "t=1750000321,v1=5b5b58ee66fabd97f35995d8a397ba54935bf1b4ac791a88edde2f9ea0185208"
+    }
+  ]
+}

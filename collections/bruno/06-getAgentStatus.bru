@@ -1,0 +1,13 @@
+meta {
+  name: getAgentStatus
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/agents/status
+}
+
+docs {
+  This route requires per-request Ed25519 signing (X-Agent-* headers), not a static Bearer token. See signing/agent-auth.md and examples/sign-request/. A static collection cannot sign it for you.
+}

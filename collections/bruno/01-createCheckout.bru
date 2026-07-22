@@ -1,0 +1,30 @@
+meta {
+  name: createCheckout
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/checkouts
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{apiKey}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "amount": 1500,
+    "payer_tax_number": "52998224725"
+  }
+}
+
+docs {
+  Create a checkout
+}

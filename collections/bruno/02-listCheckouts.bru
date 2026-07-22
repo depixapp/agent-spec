@@ -1,0 +1,18 @@
+meta {
+  name: listCheckouts
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/checkouts
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{apiKey}}
+}
+
+docs {
+  List checkouts
+}

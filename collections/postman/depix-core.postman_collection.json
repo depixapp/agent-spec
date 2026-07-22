@@ -1,0 +1,174 @@
+{
+  "info": {
+    "name": "DePix — core flow",
+    "_postman_id": "depix-agent-spec-core-0001",
+    "description": "Generated from the live DePix OpenAPI (3.1.0, info.version 0.17.0) by collections/gen-collections.mjs. Set {{apiKey}} to an sk_test_/sk_live_ key. Do not hand-edit — regenerate.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.depixapp.com"
+    },
+    {
+      "key": "apiKey",
+      "value": "sk_test_REPLACE_ME"
+    },
+    {
+      "key": "checkoutId",
+      "value": "chk_REPLACE_ME"
+    }
+  ],
+  "item": [
+    {
+      "name": "createCheckout — Create a checkout",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{apiKey}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/checkouts",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "checkouts"
+          ]
+        },
+        "description": "Creates a charge with a PIX QR and hosted payment page. Requires scope `merchant_write` on the API-key path; a merchant profile is required. sk_test_ creates a sandbox checkout (non-payable placeholder QR — complete it via simulate-payment). Track via GET /api/checkouts/{id} polling or checkout.* webhooks. Supports Idempotency-Key.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 1500,\n  \"payer_tax_number\": \"52998224725\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "listCheckouts — List checkouts",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/checkouts",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "checkouts"
+          ]
+        },
+        "description": "Paginated checkout list for the authenticated merchant, filtered to the key's mode (sk_test_ sees only sandbox checkouts). Requires scope `merchant_read` on the API-key path."
+      }
+    },
+    {
+      "name": "getCheckout — Get a checkout",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/checkouts/:id",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "checkouts",
+            "{{checkoutId}}"
+          ]
+        },
+        "description": "Full checkout detail (owner view). `pix_payload` is present only while pending. Poll until a terminal status (see the status enum) or subscribe to checkout.* webhooks. Requires scope `merchant_read` on the API-key path."
+      }
+    },
+    {
+      "name": "simulateCheckoutPayment — Simulate payment (sandbox only)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/checkouts/:id/simulate-payment",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "checkouts",
+            "{{checkoutId}}",
+            "simulate-payment"
+          ]
+        },
+        "description": "Completes a SANDBOX checkout as if it were paid (fires checkout.completed when a callback URL is set). Live checkouts are 403 sandbox_only. Requires scope `merchant_write` on the API-key path."
+      }
+    },
+    {
+      "name": "getMe — Identify the authenticated merchant",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "me"
+          ]
+        },
+        "description": "Probe endpoint: returns the merchant behind the credentials. 404 (not 403) when the account has no merchant profile — integrators use that to tell \"valid key, no merchant yet\" apart. Requires scope `merchant_read` on the API-key path."
+      }
+    },
+    {
+      "name": "getAgentStatus — Agent account status + progress",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/agents/status",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "agents",
+            "status"
+          ]
+        },
+        "description": "This route requires per-request Ed25519 signing (X-Agent-* headers), not a static Bearer token. See signing/agent-auth.md and examples/sign-request/. A static collection cannot sign it for you."
+      }
+    }
+  ]
+}

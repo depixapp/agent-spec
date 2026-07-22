@@ -1,0 +1,23 @@
+{
+  "name": "depix-agent-spec",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Normative signing spec, test vectors, runnable verify/sign examples and generated collections for the DePix agent API.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "vectors:gen": "node scripts/gen-vectors.mjs",
+    "vectors:check": "node scripts/gen-vectors.mjs --check",
+    "vectors:verify": "node scripts/verify-vectors.mjs",
+    "collections:gen": "node collections/gen-collections.mjs",
+    "pull-canonical": "node scripts/pull-canonical.mjs",
+    "example:verify-webhook": "node examples/verify-webhook/node/verify.mjs",
+    "example:sign-request": "node examples/sign-request/node/sign.mjs",
+    "test": "node scripts/verify-vectors.mjs && node scripts/gen-vectors.mjs --check && node examples/verify-webhook/node/verify.mjs && node examples/sign-request/node/sign.mjs"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

@@ -1,0 +1,81 @@
+# DePix App
+
+> Non-custodial Pix payment gateway on the Liquid Network. Accept Pix payments
+> (checkouts and products), on-ramp BRL to DePix and off-ramp DePix to Pix —
+> all via a REST API with API-key auth. Sandbox keys (`sk_test_`) work out of
+> the box; `simulate-payment` completes test checkouts without real money.
+
+DePix App never holds user funds or private keys: the API returns Pix QR codes
+and Liquid deposit addresses, and all signing happens client-side. Amounts are
+integer BRL cents. The payer's CPF/CNPJ (`payer_tax_number` / `taxNumber`) is
+required on money-moving endpoints. Naming: **DePix** is the BRL-pegged
+stablecoin on the Liquid Network; **DePix App** is this gateway service, built
+on top of it.
+
+Key facts:
+- API base URL: https://api.depixapp.com — every path below already carries its
+  own `/api/` prefix, so the full URL is e.g. https://api.depixapp.com/api/checkouts
+- Auth header: `Authorization: Bearer sk_test_...` (or `sk_live_...`)
+- Fees (deposit 2% + R$ 0,99; withdrawal 1% + R$ 1,00 up to R$ 100, 2% above)
+  are deducted from the amount — the DePix credited and the Pix paid out are
+  NET. Current rates and worked examples: https://depixapp.com/en/#landing-fees
+- API keys have scopes: `merchant_read` (read checkouts/products/account),
+  `merchant_write` (create charges + product CRUD), `wallet_read` (deposit/withdrawal
+  status) and `wallet_write` (on/off-ramp money movement; never granted by default)
+- Idempotency: send an `Idempotency-Key` header on POST /api/deposit, /api/withdraw, /api/checkouts
+- Errors: structured `error: { code, message, request_id, retry_after?, docs_url }`
+  alongside the legacy `response.errorMessage` (Portuguese)
+- Rate limits return 429 with `Retry-After`; every response carries `X-Request-Id`
+- Webhooks are HMAC-signed (`X-DePix-Signature: t=<ts>,v1=<hmac-sha256>`):
+  checkout.* events for all merchants, plus deposit.*/withdraw.* events for
+  API-key operations; status can also be polled via `GET /api/deposits/:id`
+  and `GET /api/withdrawals/:id` (terminal deposit status: `depix_sent`;
+  full status enums in the docs and OpenAPI)
+
+## Docs
+
+- [API reference (Markdown)](https://depixapp.com/docs.md): full API documentation, agent-friendly
+- [OpenAPI 3.1 specification](https://depixapp.com/openapi.json): machine-readable schema of the REST API
+- [Agent manifest](https://depixapp.com/.well-known/agent.json): capabilities, auth and endpoints summary
+- [API reference (HTML, English)](https://depixapp.com/docs/en/): human-readable, code examples in 8 languages
+- [API reference (HTML, Portuguese)](https://depixapp.com/docs/): versão em português
+
+## Agent wallet SDK
+
+For autonomous agents that hold their own funds, there is a companion
+non-custodial wallet SDK, **`@depixapp/sdk`** (TypeScript, ESM, AGPL-3.0). It is
+wallet-first and intent-based: the agent creates/restores a wallet from a seed
+it controls, then calls `convert()`, `quote()`, `send()`, `receive()`,
+`deposit()` and `withdraw()`. Routing (SideSwap / Boltz / SideShift), settlement
+and crash-recovery are built in — no provider streams to drive, no polling loops
+to write. This gateway API is the Pix on/off-ramp and merchant side; the SDK is
+the agent-side wallet that holds funds/keys and signs client-side. Install it
+with `npm install @depixapp/sdk`. It also supports paying and receiving over
+Lightning, settled through Boltz swaps rather than a native DePix Lightning
+rail. Payment for CryptoRefills gift cards goes over Lightning the same way.
+
+## MCP servers
+
+There are TWO, and they are not interchangeable — pick by which side of the
+transaction the agent is on:
+
+- **`depix-wallet-mcp`** — the WALLET side. Ships as a binary inside
+  `@depixapp/sdk` (`npx depix-wallet-mcp`), runs over stdio, and exposes the
+  agent's own non-custodial wallet as tools (`wallet_convert`, `wallet_quote`,
+  `wallet_send`, …). These tools MOVE FUNDS with the agent's own key.
+- **`@depixapp/mcp`** — the MERCHANT side. A hosted gateway at
+  `https://mcp.depixapp.com/mcp` (MCP Streamable HTTP, stateless; also runs
+  locally over stdio via `npx -y @depixapp/mcp`). Twenty-one tools total:
+  sixteen merchant-side — it reads and creates checkouts and products but never
+  creates deposits or withdrawals, so it cannot move funds on its own — plus
+  five support-ticket tools (open, get, list, reply, close a support ticket).
+
+- [npm package](https://www.npmjs.com/package/@depixapp/sdk): `npm install @depixapp/sdk`
+- [Agent SDK repository](https://github.com/depixapp/depix-sdk): source, README and usage
+- [Agent SDK manifest (AGENTS.md)](https://raw.githubusercontent.com/depixapp/depix-sdk/main/AGENTS.md): start-here guide for agents — routing table, units, examples
+
+## Optional
+
+- [Full documentation in one file](https://depixapp.com/llms-full.txt): llms.txt plus the entire Markdown API reference inline
+- [BTCPay Server plugin](https://depixapp.com/btcpay/en/): accept DePix in BTCPay
+- [Blog](https://depixapp.com/blog): product updates (Portuguese; English at /blog/en/)

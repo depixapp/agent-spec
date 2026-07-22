@@ -1,0 +1,115 @@
+{
+  "name": "DePix App",
+  "description": "Non-custodial Pix payment gateway on the Liquid Network. Agents can accept Pix payments (checkouts/products), on-ramp BRL to DePix and off-ramp DePix to Pix via REST API. DePix is the BRL stablecoin; DePix App is the gateway service.",
+  "version": "0.4.1",
+  "updated": "2026-07-22",
+  "urls": {
+    "website": "https://depixapp.com",
+    "docs_html": "https://depixapp.com/docs/en/",
+    "docs_markdown": "https://depixapp.com/docs.md",
+    "openapi": "https://depixapp.com/openapi.json",
+    "llms_txt": "https://depixapp.com/llms.txt",
+    "api_base": "https://api.depixapp.com",
+    "agent_sdk_repo": "https://github.com/depixapp/depix-sdk",
+    "agent_sdk_manifest": "https://raw.githubusercontent.com/depixapp/depix-sdk/main/AGENTS.md",
+    "api_base_note": "Every documented path already carries its own /api/ prefix, e.g. https://api.depixapp.com/api/checkouts. Do not append /api to this base.",
+    "fees": "https://depixapp.com/en/#landing-fees"
+  },
+  "auth": {
+    "type": "api_key",
+    "scheme": "bearer",
+    "header": "Authorization: Bearer <key>",
+    "key_formats": [
+      "sk_test_ (sandbox, self-serve)",
+      "sk_live_ (production, requires approval)"
+    ],
+    "scopes": [
+      "merchant_read",
+      "merchant_write",
+      "wallet_read",
+      "wallet_write"
+    ],
+    "scope_families": {
+      "merchant_*": "Merchant/gateway side — read checkouts, products and account (merchant_read); create charges and CRUD products (merchant_write).",
+      "wallet_*": "Wallet side — read deposit/withdrawal status (wallet_read); move money via on/off-ramp Pix (wallet_write). Never granted by default."
+    },
+    "how_to_obtain": "Two paths. Human merchants: create an account at https://depixapp.com/app/, open a merchant profile, then create keys in the API Keys area (sandbox keys are immediate). Agent accounts: self-onboard with no email and no dashboard — generate an Ed25519 keypair and call POST /api/agents/register signing the request with it, passing an operator op_… token (a human obtains it once by connecting a GitHub/Google identity in the dashboard); a sandbox key and a wallet-only starter live key are auto-issued in the registration response. See agent_onboarding below and https://depixapp.com/docs/en/#agents."
+  },
+  "capabilities": [
+    "create_checkout",
+    "get_checkout",
+    "list_checkouts",
+    "simulate_payment_sandbox",
+    "create_product",
+    "list_products",
+    "deposit_pix_to_depix",
+    "withdraw_depix_to_pix",
+    "signed_webhooks"
+  ],
+  "constraints": {
+    "custody": "non-custodial — the API never holds funds or private keys; signing is client-side",
+    "amounts": "integer BRL cents",
+    "payer_tax_number": "CPF/CNPJ of the PAYER is required on money-moving endpoints (deposit and checkout); a missing value returns 400 tax_number_required.",
+    "idempotency": "Idempotency-Key header supported on POST /api/deposit, /api/withdraw, /api/checkouts",
+    "rate_limits": "per-IP, per-user, per-merchant and optional per-key; 429 with Retry-After",
+    "webhooks": "HMAC-signed; checkout.* for all merchants, deposit.*/withdraw.* for API-key operations; status can also be polled",
+    "fees": "Deducted from the amount — the DePix credited and the Pix paid out are NET. Deposit 2% + R$ 0,99; withdrawal 1% + R$ 1,00 up to R$ 100,00 and 2% above it. Current rates and worked examples: https://depixapp.com/en/#landing-fees",
+    "depix_asset_id": "02f22f8d9c76ab41661a2729e4752e2c5d1a263012141b86ea98af5472df5189 (Liquid mainnet, 8 decimals, 1 DePix = 1 BRL)"
+  },
+  "agent_sdk": {
+    "name": "@depixapp/sdk",
+    "summary": "Non-custodial Liquid-Network wallet SDK for autonomous agents. Wallet-first, intent-based API: create/restore a wallet from a seed the agent controls, then convert(), quote(), send(), receive(), deposit() and withdraw() across assets and networks — routing, settlement and crash-recovery are built in, so there are no provider streams to drive and no polling loops to write.",
+    "repo": "https://github.com/depixapp/depix-sdk",
+    "manifest": "https://raw.githubusercontent.com/depixapp/depix-sdk/main/AGENTS.md",
+    "language": "TypeScript (ESM, Node >= 22.4)",
+    "license": "AGPL-3.0-only",
+    "custody": "non-custodial — the seed never leaves the agent; all signing is client-side",
+    "capabilities": [
+      "convert",
+      "quote",
+      "deposit_pix_to_depix",
+      "withdraw_depix_to_pix",
+      "send",
+      "receive",
+      "lightning_pay",
+      "lightning_receive",
+      "stablecoin_cross_network",
+      "guardrails",
+      "diagnostics",
+      "recover"
+    ],
+    "mcp_server": "depix-wallet-mcp — ships as a binary inside @depixapp/sdk (npx depix-wallet-mcp, stdio). Exposes the agent's own wallet as MCP tools (wallet_convert, wallet_quote, wallet_send, …); these tools MOVE FUNDS with the agent's key.",
+    "install": "npm install @depixapp/sdk",
+    "npm": "https://www.npmjs.com/package/@depixapp/sdk",
+    "version": "1.2.0",
+    "relationship": "Pairs with this gateway API: the SDK is the agent-side wallet that holds funds/keys and signs; this REST API is the Pix on/off-ramp and merchant side.",
+    "lightning": "lightning_pay / lightning_receive settle through Boltz swaps; DePix itself is not issued on Lightning."
+  },
+  "contact": {
+    "security": "https://depixapp.com/.well-known/security.txt",
+    "support": "https://depixapp.com/app/"
+  },
+  "mcp": {
+    "gateway": {
+      "package": "@depixapp/mcp",
+      "hosted_url": "https://mcp.depixapp.com/mcp",
+      "transport": "MCP Streamable HTTP (stateless); also runs locally over stdio via `npx -y @depixapp/mcp`",
+      "tool_count": 21,
+      "tool_count_merchant": 16,
+      "tool_count_support": 5,
+      "summary": "Twenty-one tools over this REST API. Sixteen are merchant side — this server reads and creates checkouts and products but never creates deposits or withdrawals, so it cannot move funds on its own. The other five are support-ticket tools (open, get, list, reply, close a support ticket)."
+    },
+    "wallet": {
+      "package": "@depixapp/sdk",
+      "binary": "depix-wallet-mcp",
+      "transport": "stdio",
+      "summary": "Wallet side. Exposes the agent's own non-custodial wallet; these tools move funds."
+    }
+  },
+  "agent_onboarding": {
+    "summary": "Agents can self-onboard via /api/agents/* instead of a human creating keys in the dashboard.",
+    "auth": "Per-request Ed25519 signature over the agent's own keypair, plus an operator token (op_…) a human obtains once by connecting an identity in the dashboard.",
+    "status_endpoint": "GET /api/agents/status — account status, graduation progress and the read-only `pacing` limits, so the agent can pace itself instead of discovering caps through 4xx.",
+    "docs": "https://depixapp.com/docs/en/"
+  }
+}

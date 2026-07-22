@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "DePix — core flow",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

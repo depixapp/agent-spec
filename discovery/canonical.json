@@ -1,0 +1,14 @@
+{
+  "_comment": "Pinned canonical values verified by scripts/pull-canonical.mjs against the LIVE sources on every CI run. These are the load-bearing, stable fields (versions + tool counts) — NOT a byte-for-byte snapshot, so volatile fields like the manifest 'updated' date never cause a false drift. When the live API/discovery legitimately changes, bump the value here (and regenerate collections/vectors if the OpenAPI moved) in the same commit that refreshes discovery/agent.json + discovery/llms.txt.",
+  "sources": {
+    "openapi": "https://api.depixapp.com/openapi.json",
+    "agent_json": "https://depixapp.com/.well-known/agent.json",
+    "llms_txt": "https://depixapp.com/llms.txt"
+  },
+  "openapi_version": "0.17.0",
+  "agent_manifest_version": "0.4.1",
+  "agent_sdk_version": "1.2.0",
+  "mcp_tool_count": 21,
+  "mcp_tool_count_merchant": 16,
+  "mcp_tool_count_support": 5
+}

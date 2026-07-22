@@ -1,0 +1,18 @@
+meta {
+  name: simulateCheckoutPayment
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/checkouts/:id/simulate-payment
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{apiKey}}
+}
+
+docs {
+  Simulate payment (sandbox only)
+}

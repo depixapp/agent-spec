@@ -1,0 +1,18 @@
+# Node
+node_modules/
+npm-debug.log*
+.DS_Store
+
+# Go
+examples/**/go.sum
+bin/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Editors
+.idea/
+.vscode/
