@@ -1,6 +1,6 @@
 # Guardrails and limits
 
-There are **two different things** called "limits" in the DePix agent stack, on
+There are **two different things** called "limits" in the DePix App agent stack, on
 opposite sides of the wire. They are easy to conflate; they are not the same and
 they are enforced by different code. This document names both and points to the
 live source of truth for the numbers.
@@ -42,7 +42,7 @@ Source: `depix-sdk` `src/guardrails/config.ts`.
 
 ## 2. Server-side agent pacing (API-side, enforced by the backend)
 
-These are enforced by the **DePix API**, independent of any client. They pace a
+These are enforced by the **DePix App API**, independent of any client. They pace a
 young/unverified agent account so it graduates gradually instead of discovering
 caps through opaque `4xx`s. The account can read its own envelope so it can pace
 itself.

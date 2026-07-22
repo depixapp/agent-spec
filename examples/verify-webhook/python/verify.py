@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify DePix webhook signatures (Python stdlib only) against the committed
+"""Verify DePix App webhook signatures (Python stdlib only) against the committed
 test vectors. Mirrors a real receiver per signing/webhook-signature.md:
 
     v1 == hex(HMAC_SHA256(secret, f"{t}.{raw_body}")), constant-time compared.

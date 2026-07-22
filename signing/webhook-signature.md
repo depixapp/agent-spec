@@ -1,8 +1,8 @@
-# DePix webhook signature (`X-DePix-Signature`)
+# DePix App webhook signature (`X-DePix-Signature`)
 
-Normative specification of the signature on **outbound** webhooks DePix delivers
+Normative specification of the signature on **outbound** webhooks DePix App delivers
 to a merchant's callback URL. A receiver uses it to prove a delivery genuinely
-came from DePix and was not tampered with or replayed. Test vectors are in
+came from DePix App and was not tampered with or replayed. Test vectors are in
 [`vectors/webhook.json`](./vectors/webhook.json); runnable verifiers in
 [`../examples/verify-webhook/`](../examples/verify-webhook/).
 
@@ -18,7 +18,7 @@ X-DePix-Signature: t=<unix-seconds>,v1=<hex-hmac-sha256>
 
 Two comma-separated `key=value` fields:
 
-- `t` — the unix timestamp (**seconds**) at which DePix signed the delivery.
+- `t` — the unix timestamp (**seconds**) at which DePix App signed the delivery.
 - `v1` — the signature: **HMAC-SHA256**, lowercase hex.
 
 Companion headers on the same request:

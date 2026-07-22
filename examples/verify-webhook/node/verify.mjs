@@ -1,4 +1,4 @@
-// Verify DePix webhook signatures (Node, zero deps) against the committed test
+// Verify DePix App webhook signatures (Node, zero deps) against the committed test
 // vectors. Mirrors what a real receiver does per signing/webhook-signature.md:
 //   v1 == hex(HMAC_SHA256(secret, `${t}.${rawBody}`)), constant-time compared.
 //

@@ -1,4 +1,4 @@
-# DePix MCP servers
+# DePix App MCP servers
 
 This repo does **not** re-host the MCP server code or its schema — that lives,
 public and maintained, in [`depixapp/depix-mcp`](https://github.com/depixapp/depix-mcp).
@@ -17,7 +17,7 @@ Pick by **which side of the transaction** the agent is on:
 | Tools | **21 total** — 16 merchant-side + 5 support-ticket | `wallet_convert`, `wallet_quote`, `wallet_send`, … |
 | Source | [`depixapp/depix-mcp`](https://github.com/depixapp/depix-mcp) | [`depixapp/depix-sdk`](https://github.com/depixapp/depix-sdk) |
 
-The hosted `@depixapp/mcp` gateway is a **pure client of the public DePix API** —
+The hosted `@depixapp/mcp` gateway is a **pure client of the public DePix App API** —
 it holds no critical credentials and goes through the same auth, scopes and rate
 limits as any other agent. It is **not custodial**.
 

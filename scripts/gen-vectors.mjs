@@ -2,7 +2,7 @@
 //
 // This produces signing/vectors/agent-auth.json and signing/vectors/webhook.json
 // by RUNNING the real algorithms with a FIXED, TEST-ONLY key/secret, then
-// self-verifying every vector with an independent replica of the DePix BACKEND
+// self-verifying every vector with an independent replica of the DePix App BACKEND
 // verifier before writing. If any vector fails to verify, nothing is written.
 //
 // Uses only Node built-ins (`node:crypto`), which is exactly what the backend
@@ -177,7 +177,7 @@ function buildAgentAuthVectors() {
 
   return {
     _comment:
-      "TEST-ONLY signing vectors for the DePix Ed25519 agent request-signing scheme. " +
+      "TEST-ONLY signing vectors for the DePix App Ed25519 agent request-signing scheme. " +
       "The keypair below is derived from a FIXED public seed and MUST NEVER be used for a real agent. " +
       "See ../agent-auth.md for the normative spec. Regenerate with `node scripts/gen-vectors.mjs`.",
     scheme: AUTH_SCHEME_VERSION,
@@ -247,7 +247,7 @@ function buildWebhookVectors() {
 
   return {
     _comment:
-      "TEST-ONLY signing vectors for the DePix outbound-webhook signature (X-DePix-Signature). " +
+      "TEST-ONLY signing vectors for the DePix App outbound-webhook signature (X-DePix-Signature). " +
       "The secret below is a placeholder and MUST NEVER be used for a real merchant. " +
       "See ../webhook-signature.md for the normative spec. Regenerate with `node scripts/gen-vectors.mjs`.",
     algorithm: "HMAC-SHA256(secret, `${t}.${payload}`) as lowercase hex",

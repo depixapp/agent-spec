@@ -1,4 +1,4 @@
-// Verify DePix webhook signatures (Go stdlib only) against the committed test
+// Verify DePix App webhook signatures (Go stdlib only) against the committed test
 // vectors. Mirrors a real receiver per signing/webhook-signature.md:
 //
 //	v1 == hex(HMAC_SHA256(secret, t + "." + rawBody)), constant-time compared.

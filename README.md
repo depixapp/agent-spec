@@ -1,4 +1,4 @@
-# DePix agent-spec
+# DePix App agent-spec
 
 The **normative signing spec, test vectors, runnable examples, and generated
 collections** for building agents on the [DePix App](https://depixapp.com) API —

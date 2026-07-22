@@ -1,5 +1,5 @@
 {
-  "_comment": "TEST-ONLY signing vectors for the DePix Ed25519 agent request-signing scheme. The keypair below is derived from a FIXED public seed and MUST NEVER be used for a real agent. See ../agent-auth.md for the normative spec. Regenerate with `node scripts/gen-vectors.mjs`.",
+  "_comment": "TEST-ONLY signing vectors for the DePix App Ed25519 agent request-signing scheme. The keypair below is derived from a FIXED public seed and MUST NEVER be used for a real agent. See ../agent-auth.md for the normative spec. Regenerate with `node scripts/gen-vectors.mjs`.",
   "scheme": "depix-agent-auth:v1",
   "audience": "api.depixapp.com",
   "canonical_string_format": "scheme \\n audience \\n METHOD \\n path \\n timestamp \\n nonce \\n sha256hex(canonical_body)   (7 lines, LF-joined, no trailing newline)",

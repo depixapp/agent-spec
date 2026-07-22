@@ -1,5 +1,5 @@
 {
-  "_comment": "TEST-ONLY signing vectors for the DePix outbound-webhook signature (X-DePix-Signature). The secret below is a placeholder and MUST NEVER be used for a real merchant. See ../webhook-signature.md for the normative spec. Regenerate with `node scripts/gen-vectors.mjs`.",
+  "_comment": "TEST-ONLY signing vectors for the DePix App outbound-webhook signature (X-DePix-Signature). The secret below is a placeholder and MUST NEVER be used for a real merchant. See ../webhook-signature.md for the normative spec. Regenerate with `node scripts/gen-vectors.mjs`.",
   "algorithm": "HMAC-SHA256(secret, `${t}.${payload}`) as lowercase hex",
   "header_format": "X-DePix-Signature: t=<unix seconds>,v1=<hex hmac-sha256>",
   "test_secret": {

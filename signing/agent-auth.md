@@ -1,7 +1,7 @@
-# DePix agent request signing (`depix-agent-auth:v1`)
+# DePix App agent request signing (`depix-agent-auth:v1`)
 
 Normative specification of the Ed25519 request-signing scheme an agent uses to
-authenticate to the DePix API. This is the authoritative, standalone description
+authenticate to the DePix App API. This is the authoritative, standalone description
 of the canonical string an integrator must reproduce byte-for-byte. Test vectors
 that exercise every rule below live in
 [`vectors/agent-auth.json`](./vectors/agent-auth.json); runnable signers are in
@@ -117,7 +117,7 @@ So both a bodyless `GET` and a `POST` whose body is `{}` sign over
 `sha256("") = e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
 
 > ### Why `{}` → `""` (the interop bug)
-> The DePix API runs on a serverless runtime that **parses the JSON body before
+> The DePix App API runs on a serverless runtime that **parses the JSON body before
 > the handler sees it**, then the verifier re-serializes the parsed object to
 > rebuild the canonical string. An empty object round-trips through the parser
 > and comes back as "no meaningful body", which the server treats as `""`. A
@@ -167,7 +167,7 @@ header — it is a constant baked into both the signer and the verifier. This
 binds a signature to the production API: a signature minted for a different
 environment (whose verifier uses a different audience literal) will not verify in
 production, so a proxy cannot forge or replay across environments. Unless you are
-explicitly integrating against a non-production DePix deployment that documents a
+explicitly integrating against a non-production DePix App deployment that documents a
 different audience, use `api.depixapp.com`.
 
 ---
