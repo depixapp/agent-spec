@@ -74,6 +74,24 @@
       "public_key_hex": "bc2da142490e2a638379a85e2c6eb5403c20b184edcb424ee489228889a1d20e",
       "canonical_string": "depix-agent-auth:v1\napi.depixapp.com\nPOST\n/api/agents/keys/revoke\n1750000789\n0f1e2d3c4b5a69788796a5b4c3d2e1f0\n9a6beb7874f989d069b7ae162649c166e25903fc2582060116a611fd367c51f0",
       "signature_hex": "323ee3bb46c333b19e932642fb686bfcf0af1c2d602dd13279a9b3efb2cb5a8c6043105fbb85ba9404d0beaa55fe49c5d70febcddf39d3c006edb1737ff3330d"
+    },
+    {
+      "name": "POST with a UTF-8 multibyte body — sha256 is over the UTF-8 bytes, not code points",
+      "method": "POST",
+      "path": "/api/agents/register",
+      "timestamp": "1750000999",
+      "nonce": "fedcba98765432100123456789abcdef",
+      "audience": "api.depixapp.com",
+      "body": {
+        "name": "Açaí Café 日本 Ω 🚀",
+        "operator_email": "operador@exemplo.com",
+        "liquid_address": "lq1qtestonlyaddressplaceholder"
+      },
+      "canonical_body": "{\"name\":\"Açaí Café 日本 Ω 🚀\",\"operator_email\":\"operador@exemplo.com\",\"liquid_address\":\"lq1qtestonlyaddressplaceholder\"}",
+      "body_sha256_hex": "2b630e1616e39a816b6cd3cb7867e7f35e32677cf1fc2fe114c1353de614d40c",
+      "public_key_hex": "bc2da142490e2a638379a85e2c6eb5403c20b184edcb424ee489228889a1d20e",
+      "canonical_string": "depix-agent-auth:v1\napi.depixapp.com\nPOST\n/api/agents/register\n1750000999\nfedcba98765432100123456789abcdef\n2b630e1616e39a816b6cd3cb7867e7f35e32677cf1fc2fe114c1353de614d40c",
+      "signature_hex": "a5166d6c8227057ca1e3033c477fe979de579cac1d139f9c6dacb842285199bdb934239804e55dbd87f027c5ce27f00c82842182398815d58d5ca1af48d0110c"
     }
   ]
 }

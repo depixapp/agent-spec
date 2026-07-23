@@ -143,6 +143,24 @@ function buildAgentAuthVectors() {
       nonce: "0f1e2d3c4b5a69788796a5b4c3d2e1f0",
       body: { id: "key_TEST_1" },
     },
+    {
+      // The interop edge that trips naive implementations: the body hash is
+      // sha256 over the UTF-8 BYTES of the JSON, not over code points / UTF-16
+      // units. A client that measures length or hashes in the wrong encoding
+      // produces a different digest and a 401. This vector pins the byte-exact
+      // behavior for a body with multibyte scalars (Latin accents, CJK, a Greek
+      // capital, and an emoji outside the BMP).
+      name: "POST with a UTF-8 multibyte body — sha256 is over the UTF-8 bytes, not code points",
+      method: "POST",
+      path: "/api/agents/register",
+      timestamp: "1750000999",
+      nonce: "fedcba98765432100123456789abcdef",
+      body: {
+        name: "Açaí Café 日本 Ω 🚀",
+        operator_email: "operador@exemplo.com",
+        liquid_address: "lq1qtestonlyaddressplaceholder",
+      },
+    },
   ];
 
   const vectors = cases.map((c) => {
