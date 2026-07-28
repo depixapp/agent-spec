@@ -65,10 +65,11 @@ transaction the agent is on:
   `wallet_send`, …). These tools MOVE FUNDS with the agent's own key.
 - **`@depixapp/mcp`** — the MERCHANT side. A hosted gateway at
   `https://mcp.depixapp.com/mcp` (MCP Streamable HTTP, stateless; also runs
-  locally over stdio via `npx -y @depixapp/mcp`). Twenty-one tools total:
+  locally over stdio via `npx -y @depixapp/mcp`). Twenty-two tools total:
   sixteen merchant-side — it reads and creates checkouts and products but never
   creates deposits or withdrawals, so it cannot move funds on its own — plus
-  five support-ticket tools (open, get, list, reply, close a support ticket).
+  six support-ticket tools (open, get, list, reply, close a support ticket, and
+  attach a file to one).
 
 - [npm package](https://www.npmjs.com/package/@depixapp/sdk): `npm install @depixapp/sdk`
 - [Agent SDK repository](https://github.com/depixapp/depix-sdk): source, README and usage

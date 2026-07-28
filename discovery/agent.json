@@ -94,10 +94,10 @@
       "package": "@depixapp/mcp",
       "hosted_url": "https://mcp.depixapp.com/mcp",
       "transport": "MCP Streamable HTTP (stateless); also runs locally over stdio via `npx -y @depixapp/mcp`",
-      "tool_count": 21,
+      "tool_count": 22,
       "tool_count_merchant": 16,
-      "tool_count_support": 5,
-      "summary": "Twenty-one tools over this REST API. Sixteen are merchant side — this server reads and creates checkouts and products but never creates deposits or withdrawals, so it cannot move funds on its own. The other five are support-ticket tools (open, get, list, reply, close a support ticket)."
+      "tool_count_support": 6,
+      "summary": "Twenty-two tools over this REST API. Sixteen are merchant side — this server reads and creates checkouts and products but never creates deposits or withdrawals, so it cannot move funds on its own. The other six are support-ticket tools (open, get, list, reply, close a support ticket, and attach a file to one)."
     },
     "wallet": {
       "package": "@depixapp/sdk",
