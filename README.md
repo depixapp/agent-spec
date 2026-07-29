@@ -17,8 +17,8 @@ the non-custodial Pix↔DePix payment gateway on the Liquid Network.
 | Machine-readable API schema | <https://api.depixapp.com/openapi.json> (OpenAPI 3.1) |
 | Agent quickstart / discovery | <https://depixapp.com/llms.txt> · <https://depixapp.com/.well-known/agent.json> |
 | Human API reference | <https://depixapp.com/docs/en/> |
-| MCP server (merchant/gateway) | <https://github.com/depixapp/depix-mcp> |
-| Wallet SDK (holds funds, signs) | <https://github.com/depixapp/depix-sdk> |
+| MCP server (one server, two levels — 22 hosted / 49 local) | <https://github.com/depixapp/depix-mcp> |
+| Wallet SDK (code-level lineage of the same engine) | <https://github.com/depixapp/depix-sdk> |
 
 ## What lives here (and nowhere else)
 
@@ -39,7 +39,7 @@ collections/
 discovery/
   agent.json, llms.txt     Versioned snapshot of the live discovery surface
   canonical.json           Pinned values the drift guard checks against live
-mcp/README.md              Pointer to depix-mcp + the two (non-interchangeable) MCP servers
+mcp/README.md              Pointer to depix-mcp + the ONE MCP server's two levels of access
 scripts/
   gen-vectors.mjs          Regenerate + self-verify the test vectors
   verify-vectors.mjs       Re-verify the committed vectors (CI guard against rot)

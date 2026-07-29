@@ -85,15 +85,18 @@ and the `AgentRegisterResponse` schema in `api/_lib/openapi.js`.
 
 ---
 
-## 3. Aside: the two MCP servers are not interchangeable
+## 3. Aside: the two MCP levels are not interchangeable
 
-Related and often confused — pick by which side of the transaction the agent is
-on (see [`../mcp/README.md`](../mcp/README.md)):
+Related and often confused — there is ONE MCP server, `@depixapp/mcp`, at two
+levels of access (see [`../mcp/README.md`](../mcp/README.md)). Pick by whether
+the agent needs a key to the money:
 
-- **`@depixapp/mcp`** — the **merchant/gateway** side. Hosted at
-  `https://mcp.depixapp.com/mcp` (and `npx -y @depixapp/mcp` over stdio). Reads
-  and creates checkouts/products and reads pay-status; it **cannot move funds**.
-- **`depix-wallet-mcp`** — the **wallet** side. Ships inside `@depixapp/sdk`
-  (`npx depix-wallet-mcp`, stdio) and exposes the agent's own non-custodial
-  wallet as tools that **do move funds** with the agent's key. The SDK
-  guardrails in §1 apply here.
+- **Level 1 — hosted.** `https://mcp.depixapp.com/mcp`, Streamable HTTP,
+  **22 tools**. Reads and creates checkouts/products and reads pay-status; it
+  **cannot move funds** — this deployment holds no seed, so the `wallet_*`
+  tools are structurally absent from it.
+- **Level 2 — local.** `npx -y @depixapp/mcp` over stdio, run where the agent
+  lives, **49 tools**. The extra 27 `wallet_*` tools expose the operator's own
+  non-custodial wallet and **do move funds**, signed in-process with the
+  operator's key. The guardrails in §1 apply here. First run is
+  `npx -y @depixapp/mcp init`; the seed never leaves that machine.

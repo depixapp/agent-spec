@@ -40,36 +40,50 @@ Key facts:
 - [API reference (HTML, English)](https://depixapp.com/docs/en/): human-readable, code examples in 8 languages
 - [API reference (HTML, Portuguese)](https://depixapp.com/docs/): versão em português
 
-## Agent wallet SDK
+## MCP server — one server, two levels
 
-For autonomous agents that hold their own funds, there is a companion
-non-custodial wallet SDK, **`@depixapp/sdk`** (TypeScript, ESM, AGPL-3.0). It is
-wallet-first and intent-based: the agent creates/restores a wallet from a seed
-it controls, then calls `convert()`, `quote()`, `send()`, `receive()`,
-`deposit()` and `withdraw()`. Routing (SideSwap / Boltz / SideShift), settlement
-and crash-recovery are built in — no provider streams to drive, no polling loops
-to write. This gateway API is the Pix on/off-ramp and merchant side; the SDK is
-the agent-side wallet that holds funds/keys and signs client-side. Install it
-with `npm install @depixapp/sdk`. It also supports paying and receiving over
-Lightning, settled through Boltz swaps rather than a native DePix Lightning
-rail. Payment for CryptoRefills gift cards goes over Lightning the same way.
+There is ONE DePix MCP server, **`@depixapp/mcp`** (Apache-2.0, registry id
+`io.github.depixapp/depix-mcp`). It registers **49 tools**. Which of them work
+depends only on where it runs and whether that process holds a wallet seed:
 
-## MCP servers
+- **Level 1 — hosted, 22 tools, receive.** `https://mcp.depixapp.com/mcp`
+  (MCP Streamable HTTP, stateless). Zero install: connect as an OAuth 2.1
+  connector, or send `Authorization: Bearer sk_test_…`. Sixteen merchant tools —
+  it reads and creates checkouts and products but never creates deposits or
+  withdrawals, so it cannot move funds on its own — plus six
+  support-ticket tools (open, get, list, reply, close a support ticket, and
+  attach a file to one). This deployment holds no seed, so the 27 `wallet_*`
+  tools are structurally absent from it.
+- **Level 2 — local, 49 tools, the full wallet.** `npx -y @depixapp/mcp` over
+  stdio, run where the agent lives. Same 22 tools plus 27 `wallet_*` tools that
+  hold, sign and MOVE FUNDS: balances and addresses, Pix on/off-ramp, send,
+  quote/convert, cross-network stablecoin shifts, Lightning pay/receive (settled
+  through Boltz swaps, not a native DePix Lightning rail), gift cards,
+  guardrails, recovery and diagnostics. Env: `DEPIX_API_KEY` (gateway tools),
+  `DEPIX_WALLET_PASSPHRASE` (wallet tools), `DEPIX_WALLET_DIR` (optional).
+  Without a configured wallet those tools stay listed and return a typed
+  `wallet_not_configured` error.
 
-There are TWO, and they are not interchangeable — pick by which side of the
-transaction the agent is on:
+First run is a human terminal ceremony, never an MCP tool — the mnemonic must
+not transit model context: **`npx -y @depixapp/mcp init`** creates or restores
+the wallet and prints the paste-ready `mcpServers` block. The split between the
+levels is custody, not withheld features: signing happens in-process, so
+whichever process runs a wallet tool IS the seed holder, and DePix App holds no
+seeds. stdio is the only default-safe transport for level 2 — the server loads
+the seed process-wide and has no auth of its own.
 
-- **`depix-wallet-mcp`** — the WALLET side. Ships as a binary inside
-  `@depixapp/sdk` (`npx depix-wallet-mcp`), runs over stdio, and exposes the
-  agent's own non-custodial wallet as tools (`wallet_convert`, `wallet_quote`,
-  `wallet_send`, …). These tools MOVE FUNDS with the agent's own key.
-- **`@depixapp/mcp`** — the MERCHANT side. A hosted gateway at
-  `https://mcp.depixapp.com/mcp` (MCP Streamable HTTP, stateless; also runs
-  locally over stdio via `npx -y @depixapp/mcp`). Twenty-two tools total:
-  sixteen merchant-side — it reads and creates checkouts and products but never
-  creates deposits or withdrawals, so it cannot move funds on its own — plus
-  six support-ticket tools (open, get, list, reply, close a support ticket, and
-  attach a file to one).
+- [npm package](https://www.npmjs.com/package/@depixapp/mcp): `npx -y @depixapp/mcp`
+- [MCP repository](https://github.com/depixapp/depix-mcp): source, README and usage
+
+## Agent wallet SDK (code-level lineage)
+
+`@depixapp/mcp` is the surface to reach for when an agent is driving. When YOU
+are writing the code, the same wallet engine is also published as
+**`@depixapp/sdk`** (TypeScript, ESM, AGPL-3.0, 1.2.0) — wallet-first and
+intent-based: create/restore a wallet from a seed the agent controls, then call
+`convert()`, `quote()`, `send()`, `receive()`, `deposit()` and `withdraw()`.
+Routing (SideSwap / Boltz / SideShift), settlement and crash-recovery are built
+in. Install it with `npm install @depixapp/sdk`.
 
 - [npm package](https://www.npmjs.com/package/@depixapp/sdk): `npm install @depixapp/sdk`
 - [Agent SDK repository](https://github.com/depixapp/depix-sdk): source, README and usage
