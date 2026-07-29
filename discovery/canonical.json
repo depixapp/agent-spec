@@ -7,7 +7,7 @@
   },
   "openapi_version": "0.18.0",
   "agent_manifest_version": "0.5.0",
-  "agent_sdk_version": "1.2.0",
+  "agent_sdk_version": "1.2.1",
   "mcp_tool_count": 22,
   "mcp_tool_count_merchant": 16,
   "mcp_tool_count_support": 6,

@@ -147,8 +147,8 @@ pasted into any third-party endpoint.
 
 ## Code-level lineage
 
-`@depixapp/sdk` (AGPL-3.0, 1.2.0, [`depixapp/depix-sdk`](https://github.com/depixapp/depix-sdk))
+[`@depixapp/sdk`](https://www.npmjs.com/package/@depixapp/sdk) (AGPL-3.0, 1.2.1)
 is the code-level lineage of the same wallet engine that powers the 27
-`wallet_*` tools. It stays published for code-first integrations. When an
-**agent** is driving, connect `@depixapp/mcp` instead — that is the successor
-public surface.
+`wallet_*` tools. It stays published for code-first integrations, and the
+tarball ships `AGENTS.md` (routing table, units, examples). When an **agent** is
+driving, connect `@depixapp/mcp` instead — that is the successor public surface.

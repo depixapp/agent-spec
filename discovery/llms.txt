@@ -79,15 +79,14 @@ the seed process-wide and has no auth of its own.
 
 `@depixapp/mcp` is the surface to reach for when an agent is driving. When YOU
 are writing the code, the same wallet engine is also published as
-**`@depixapp/sdk`** (TypeScript, ESM, AGPL-3.0, 1.2.0) — wallet-first and
+**`@depixapp/sdk`** (TypeScript, ESM, AGPL-3.0, 1.2.1) — wallet-first and
 intent-based: create/restore a wallet from a seed the agent controls, then call
 `convert()`, `quote()`, `send()`, `receive()`, `deposit()` and `withdraw()`.
 Routing (SideSwap / Boltz / SideShift), settlement and crash-recovery are built
-in. Install it with `npm install @depixapp/sdk`.
+in. Install it with `npm install @depixapp/sdk`. The tarball ships `AGENTS.md`,
+the start-here guide for agents — routing table, units and examples.
 
 - [npm package](https://www.npmjs.com/package/@depixapp/sdk): `npm install @depixapp/sdk`
-- [Agent SDK repository](https://github.com/depixapp/depix-sdk): source, README and usage
-- [Agent SDK manifest (AGENTS.md)](https://raw.githubusercontent.com/depixapp/depix-sdk/main/AGENTS.md): start-here guide for agents — routing table, units, examples
 
 ## Optional
 

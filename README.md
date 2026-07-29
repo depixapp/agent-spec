@@ -18,7 +18,7 @@ the non-custodial Pix↔DePix payment gateway on the Liquid Network.
 | Agent quickstart / discovery | <https://depixapp.com/llms.txt> · <https://depixapp.com/.well-known/agent.json> |
 | Human API reference | <https://depixapp.com/docs/en/> |
 | MCP server (one server, two levels — 22 hosted / 49 local) | <https://github.com/depixapp/depix-mcp> |
-| Wallet SDK (code-level lineage of the same engine) | <https://github.com/depixapp/depix-sdk> |
+| Wallet SDK (code-level lineage of the same engine) | <https://www.npmjs.com/package/@depixapp/sdk> |
 
 ## What lives here (and nowhere else)
 
@@ -65,8 +65,10 @@ An agent moves through three stages; this repo supports each.
    [example](./examples/verify-webhook/)), and pace against your account's live
    limits ([`signing/limits.md`](./signing/limits.md)). DePix is
    **non-custodial** end to end: the API never holds funds or keys, and the
-   companion [`@depixapp/sdk`](https://github.com/depixapp/depix-sdk) wallet signs
-   transactions with a seed the agent controls.
+   companion wallet — the 27 `wallet_*` tools in
+   [`@depixapp/mcp`](https://github.com/depixapp/depix-mcp), or the
+   [`@depixapp/sdk`](https://www.npmjs.com/package/@depixapp/sdk) library that
+   shares their engine — signs transactions with a seed the agent controls.
 
 ## Run it locally
 

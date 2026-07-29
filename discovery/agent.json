@@ -10,8 +10,7 @@
     "openapi": "https://depixapp.com/openapi.json",
     "llms_txt": "https://depixapp.com/llms.txt",
     "api_base": "https://api.depixapp.com",
-    "agent_sdk_repo": "https://github.com/depixapp/depix-sdk",
-    "agent_sdk_manifest": "https://raw.githubusercontent.com/depixapp/depix-sdk/main/AGENTS.md",
+    "mcp_repo": "https://github.com/depixapp/depix-mcp",
     "api_base_note": "Every documented path already carries its own /api/ prefix, e.g. https://api.depixapp.com/api/checkouts. Do not append /api to this base.",
     "fees": "https://depixapp.com/en/#landing-fees"
   },
@@ -60,8 +59,6 @@
     "name": "@depixapp/sdk",
     "role": "engine lineage / code-level SDK — NOT the primary agent surface",
     "summary": "The code-level lineage of the same wallet engine that powers the 27 `wallet_*` tools inside `@depixapp/mcp`. Non-custodial Liquid-Network wallet SDK for autonomous agents: wallet-first, intent-based API — create/restore a wallet from a seed the agent controls, then convert(), quote(), send(), receive(), deposit() and withdraw() across assets and networks, with routing, settlement and crash-recovery built in. Reach for it when YOU are writing the code; when an AGENT is driving, connect `@depixapp/mcp` instead (see the `mcp` block) — that is the successor public surface.",
-    "repo": "https://github.com/depixapp/depix-sdk",
-    "manifest": "https://raw.githubusercontent.com/depixapp/depix-sdk/main/AGENTS.md",
     "language": "TypeScript (ESM, Node >= 22.4)",
     "license": "AGPL-3.0-only",
     "custody": "non-custodial — the seed never leaves the agent; all signing is client-side",
@@ -82,7 +79,8 @@
     "mcp_server": "Do NOT run this package as an MCP server. The wallet tools (wallet_convert, wallet_quote, wallet_send, …) ship inside `@depixapp/mcp` — run `npx -y @depixapp/mcp` (stdio, 49 tools, first run `npx -y @depixapp/mcp init`). See the `mcp` block.",
     "install": "npm install @depixapp/sdk",
     "npm": "https://www.npmjs.com/package/@depixapp/sdk",
-    "version": "1.2.0",
+    "manifest_note": "AGENTS.md (the start-here guide for agents — routing table, units, examples) ships inside the npm tarball.",
+    "version": "1.2.1",
     "relationship": "Same engine, two surfaces. `@depixapp/mcp` (Apache-2.0) is the agent-facing surface and the one to reach for; this SDK is the code-level lineage of its wallet engine and stays published for code-first integrations. This REST API is the Pix on/off-ramp and merchant side that both consume.",
     "lightning": "lightning_pay / lightning_receive settle through Boltz swaps; DePix itself is not issued on Lightning."
   },
@@ -92,7 +90,6 @@
   },
   "mcp": {
     "product": "@depixapp/mcp",
-    "version": "2.0.0",
     "license": "Apache-2.0",
     "npm": "https://www.npmjs.com/package/@depixapp/mcp",
     "repo": "https://github.com/depixapp/depix-mcp",
