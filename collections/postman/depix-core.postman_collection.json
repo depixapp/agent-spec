@@ -2,7 +2,7 @@
   "info": {
     "name": "DePix — core flow",
     "_postman_id": "depix-agent-spec-core-0001",
-    "description": "Generated from the live DePix OpenAPI (3.1.0, info.version 0.18.0) by collections/gen-collections.mjs. Set {{apiKey}} to an sk_test_/sk_live_ key. Do not hand-edit — regenerate.",
+    "description": "Generated from the live DePix OpenAPI (3.1.0, info.version 0.20.1) by collections/gen-collections.mjs. Set {{apiKey}} to an sk_test_/sk_live_ key. Do not hand-edit — regenerate.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -44,7 +44,7 @@
             "checkouts"
           ]
         },
-        "description": "Creates a charge with a PIX QR and hosted payment page. Requires scope `merchant_write` on the API-key path; a merchant profile is required. sk_test_ creates a sandbox checkout (non-payable placeholder QR — complete it via simulate-payment). Track via GET /api/checkouts/{id} polling or checkout.* webhooks. Supports Idempotency-Key.",
+        "description": "Creates a charge with a hosted payment page. Default rail (`payment_method: \"pix\"`): a PIX QR the payer pays in any bank app. Alternative rail (`payment_method: \"depix\"`): the payer sends DePix wallet-to-wallet on Liquid to the merchant's dedicated address — no PIX QR, no payer document, an optional merchant discount, and settlement observed on-chain (approved at the first confirmation, completed at the second). Requires scope `merchant_write` on the API-key path; a merchant profile is required. sk_test_ creates a sandbox checkout (non-payable placeholder payload — complete it via simulate-payment). Track via GET /api/checkouts/{id} polling or checkout.* webhooks. Supports Idempotency-Key.",
         "body": {
           "mode": "raw",
           "raw": "{\n  \"amount\": 1500,\n  \"payer_tax_number\": \"52998224725\"\n}",

@@ -1,7 +1,7 @@
 {
   "name": "DePix App",
-  "description": "Non-custodial Pix payment gateway on the Liquid Network. Agents can accept Pix payments (checkouts/products), on-ramp BRL to DePix and off-ramp DePix to Pix via REST API. DePix is the BRL stablecoin; DePix App is the gateway service.",
-  "version": "0.5.0",
+  "description": "Non-custodial Pix payment gateway on the Liquid Network. Agents can accept Pix payments (checkouts, products and dated charges), on-ramp BRL to DePix and off-ramp DePix to Pix via REST API. DePix is the BRL stablecoin; DePix App is the gateway service.",
+  "version": "0.5.1",
   "updated": "2026-07-29",
   "urls": {
     "website": "https://depixapp.com",
@@ -29,7 +29,7 @@
       "wallet_write"
     ],
     "scope_families": {
-      "merchant_*": "Merchant/gateway side — read checkouts, products and account (merchant_read); create charges and CRUD products (merchant_write).",
+      "merchant_*": "Merchant/gateway side — read checkouts, products, charges and account (merchant_read); create checkouts and CRUD products/charges (merchant_write). A charge is a product with kind='charge': a payment link with a due date and optional late fees, listed only with kind=charge.",
       "wallet_*": "Wallet side — read deposit/withdrawal status (wallet_read); move money via on/off-ramp Pix (wallet_write). Never granted by default."
     },
     "how_to_obtain": "Two paths. Human merchants: create an account at https://depixapp.com/app/, open a merchant profile, then create keys in the API Keys area (sandbox keys are immediate). Agent accounts: self-onboard with no email and no dashboard — generate an Ed25519 keypair and call POST /api/agents/register signing the request with it, passing an operator op_… token (a human obtains it once by connecting a GitHub/Google identity in the dashboard); a sandbox key and a wallet-only starter live key are auto-issued in the registration response. See agent_onboarding below and https://depixapp.com/docs/en/#agents."

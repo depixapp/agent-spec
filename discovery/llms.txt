@@ -1,7 +1,7 @@
 # DePix App
 
 > Non-custodial Pix payment gateway on the Liquid Network. Accept Pix payments
-> (checkouts and products), on-ramp BRL to DePix and off-ramp DePix to Pix —
+> (checkouts, products and dated charges), on-ramp BRL to DePix and off-ramp DePix to Pix —
 > all via a REST API with API-key auth. Sandbox keys (`sk_test_`) work out of
 > the box; `simulate-payment` completes test checkouts without real money.
 
@@ -19,8 +19,12 @@ Key facts:
 - Fees (deposit 2% + R$ 0,99; withdrawal 1% + R$ 1,00 up to R$ 100, 2% above)
   are deducted from the amount — the DePix credited and the Pix paid out are
   NET. Current rates and worked examples: https://depixapp.com/en/#landing-fees
-- API keys have scopes: `merchant_read` (read checkouts/products/account),
-  `merchant_write` (create charges + product CRUD), `wallet_read` (deposit/withdrawal
+- A charge (cobrança) is a product with `kind="charge"`: a payment link with a
+  due date and optional late fine/interest, served at pay.depixapp.com/c/{id},
+  never listed on the merchant's public store. `list_products` omits charges
+  unless you pass `kind=charge`. Docs: https://depixapp.com/docs/#charges
+- API keys have scopes: `merchant_read` (read checkouts/products/charges/account),
+  `merchant_write` (create checkouts + product/charge CRUD), `wallet_read` (deposit/withdrawal
   status) and `wallet_write` (on/off-ramp money movement; never granted by default)
 - Idempotency: send an `Idempotency-Key` header on POST /api/deposit, /api/withdraw, /api/checkouts
 - Errors: structured `error: { code, message, request_id, retry_after?, docs_url }`
@@ -49,7 +53,7 @@ depends only on where it runs and whether that process holds a wallet seed:
 - **Level 1 — hosted, 22 tools, receive.** `https://mcp.depixapp.com/mcp`
   (MCP Streamable HTTP, stateless). Zero install: connect as an OAuth 2.1
   connector, or send `Authorization: Bearer sk_test_…`. Sixteen merchant tools —
-  it reads and creates checkouts and products but never creates deposits or
+  it reads and creates checkouts, products and charges but never creates deposits or
   withdrawals, so it cannot move funds on its own — plus six
   support-ticket tools (open, get, list, reply, close a support ticket, and
   attach a file to one). This deployment holds no seed, so the 27 `wallet_*`

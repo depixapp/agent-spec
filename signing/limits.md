@@ -92,7 +92,8 @@ levels of access (see [`../mcp/README.md`](../mcp/README.md)). Pick by whether
 the agent needs a key to the money:
 
 - **Level 1 — hosted.** `https://mcp.depixapp.com/mcp`, Streamable HTTP,
-  **22 tools**. Reads and creates checkouts/products and reads pay-status; it
+  **22 tools**. Reads and creates checkouts, products and charges (dated
+  payment links) and reads pay-status; it
   **cannot move funds** — this deployment holds no seed, so the `wallet_*`
   tools are structurally absent from it.
 - **Level 2 — local.** `npx -y @depixapp/mcp` over stdio, run where the agent
