@@ -71,10 +71,25 @@ will eventually drift.
 > returned by `GET /api/agents/status`. It is not — in the production API the
 > `pacing` envelope is part of the `POST /api/agents/register` response.
 > `GET /api/agents/status` returns account state and **graduation** progress
-> (`account_status`, `settled_personal_deposits`, `graduated`, `graduation`,
-> `keys`), which is how an agent tracks its path to higher limits, but it does
-> not echo the numeric pacing caps. Both are in the public OpenAPI at
+> (`account_status`, `graduated`, `graduation`, `keys`), but it does not echo
+> the numeric pacing caps. Both are in the public OpenAPI at
 > `GET /openapi.json`.
+
+> **Graduation is not a deposit count.** An earlier version of this page listed
+> `settled_personal_deposits` in that payload and called it "how an agent tracks
+> its path to higher limits". Both are gone, and the second was the more
+> damaging: it invited an agent to make deposits and wait for a threshold that
+> never unlocks anything.
+>
+> The gate is, and always was, **account verification** — the deposit count was
+> only ever *one way* an account used to become verified, and that path is
+> retired. An agent verifies by **proving a registrable domain over DNS**, which
+> also unlocks receiving from third parties. So one action unlocks both.
+>
+> Read `graduation.blocked_on` from `GET /api/agents/status` and branch on it:
+> `"domain_proof"` means the next move is yours (prove the domain);
+> `"gate_review"` means the proof landed and the account is being reviewed on our
+> side — poll, don't act; `null` means graduated.
 
 This repo deliberately does **not** hardcode the pacing numbers: the field
 *names and semantics* are public (they are in the OpenAPI document), but the
