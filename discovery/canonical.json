@@ -1,5 +1,5 @@
 {
-  "_comment": "Pinned canonical values verified by scripts/pull-canonical.mjs against the LIVE sources on every CI run. These are the load-bearing, stable fields (versions + tool counts) — NOT a byte-for-byte snapshot, so volatile fields like the manifest 'updated' date never cause a false drift. When the live API/discovery legitimately changes, bump the value here (and regenerate collections/vectors if the OpenAPI moved) in the same commit that refreshes discovery/agent.json + discovery/llms.txt. The MCP counts are a hosted number and a local number because @depixapp/mcp is one server at two levels: mcp_tool_count (26) is what the DePix App-hosted endpoint exposes, mcp_tool_count_full (58) is what the operator-run npx deployment exposes, and the local surplus splits into mcp_tool_count_wallet (29, the wallet_* tools) and mcp_tool_count_local (3, the agent-local register_account/agent_status/verify_domain tools) — both existing only where the local entry runs.",
+  "_comment": "Pinned canonical values verified by scripts/pull-canonical.mjs against the LIVE sources on every CI run. These are the load-bearing, stable fields (versions + tool counts) — NOT a byte-for-byte snapshot, so volatile fields like the manifest 'updated' date never cause a false drift. When the live API/discovery legitimately changes, bump the value here (and regenerate collections/vectors if the OpenAPI moved) in the same commit that refreshes discovery/agent.json + discovery/llms.txt. The MCP counts are a hosted number and a local number because @depixapp/mcp is one server at two levels: mcp_tool_count (26) is what the DePix App-hosted endpoint exposes, mcp_tool_count_full (59) is what the operator-run npx deployment exposes, and the local surplus splits into mcp_tool_count_wallet (29, the wallet_* tools) and mcp_tool_count_local (4, the agent-local register_account/agent_status/verify_domain/configure_depix_rail tools) — both existing only where the local entry runs.",
   "sources": {
     "openapi": "https://api.depixapp.com/openapi.json",
     "agent_json": "https://depixapp.com/.well-known/agent.json",
@@ -11,7 +11,7 @@
   "mcp_tool_count": 26,
   "mcp_tool_count_merchant": 20,
   "mcp_tool_count_support": 6,
-  "mcp_tool_count_full": 58,
+  "mcp_tool_count_full": 59,
   "mcp_tool_count_wallet": 29,
-  "mcp_tool_count_local": 3
+  "mcp_tool_count_local": 4
 }

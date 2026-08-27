@@ -57,8 +57,8 @@ const checks = [
   ["agent.json mcp.gateway.tool_count_support", pin.mcp_tool_count_support, agent.mcp?.gateway?.tool_count_support],
   // `@depixapp/mcp` is ONE server at two levels of access, so the manifest
   // carries a hosted total and a local total: the hosted deployment's 26
-  // (above) and the operator-run npx deployment's 58. The local surplus splits
-  // into the 29 `wallet_*` tools and the 3 agent-local tools, both existing
+  // (above) and the operator-run npx deployment's 59. The local surplus splits
+  // into the 29 `wallet_*` tools and the 4 agent-local tools, both existing
   // only where the local entry runs.
   ["agent.json mcp.wallet.tool_count_full", pin.mcp_tool_count_full, agent.mcp?.wallet?.tool_count_full],
   ["agent.json mcp.wallet.tool_count_wallet", pin.mcp_tool_count_wallet, agent.mcp?.wallet?.tool_count_wallet],
