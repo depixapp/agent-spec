@@ -56,11 +56,13 @@ const checks = [
   ["agent.json mcp.gateway.tool_count_merchant", pin.mcp_tool_count_merchant, agent.mcp?.gateway?.tool_count_merchant],
   ["agent.json mcp.gateway.tool_count_support", pin.mcp_tool_count_support, agent.mcp?.gateway?.tool_count_support],
   // `@depixapp/mcp` is ONE server at two levels of access, so the manifest
-  // carries two totals: the hosted deployment's 22 (above) and the
-  // operator-run npx deployment's 49, of which 27 are the `wallet_*` tools
-  // that only exist where a seed is present.
+  // carries a hosted total and a local total: the hosted deployment's 26
+  // (above) and the operator-run npx deployment's 58. The local surplus splits
+  // into the 29 `wallet_*` tools and the 3 agent-local tools, both existing
+  // only where the local entry runs.
   ["agent.json mcp.wallet.tool_count_full", pin.mcp_tool_count_full, agent.mcp?.wallet?.tool_count_full],
   ["agent.json mcp.wallet.tool_count_wallet", pin.mcp_tool_count_wallet, agent.mcp?.wallet?.tool_count_wallet],
+  ["agent.json mcp.wallet.tool_count_local", pin.mcp_tool_count_local, agent.mcp?.wallet?.tool_count_local],
 ];
 
 const drifts = checks.filter(([, pinned, live]) => String(pinned) !== String(live));
