@@ -19,7 +19,7 @@ process holds a wallet seed.
 | Seed | **none** | the operator's |
 | Tools | **26** — 20 merchant/gateway + 6 support-ticket | **59** — the same 26 + 29 `wallet_*` + 4 agent-local |
 | Moves funds? | **No** — it cannot create deposits or withdrawals | **Yes** — signed in-process with the operator's key |
-| Auth | OAuth 2.1 connector, or `Authorization: Bearer sk_…` | none to configure — `init` creates the wallet, self-registers the account (`register_account`), and stores the unlock key in the OS keychain |
+| Auth | OAuth 2.1 connector, or `Authorization: Bearer sk_…` | none to configure — `init` creates the wallet, registers the server with the AI hosts it finds, and stores the unlock key in the OS keychain; the agent opens the account later with `register_account` |
 | Custody | non-custodial (holds nothing) | non-custodial (the operator holds the seed) |
 
 **The split is custody, not features withheld.** Every spend materialises the
@@ -47,15 +47,21 @@ npx -y @depixapp/mcp init            # create a new wallet
 npx -y @depixapp/mcp init --restore  # import an existing mnemonic
 ```
 
-A TTY-only human ceremony: it prints the 12 words once, challenges you to type
-some back, sets the spending guardrails, and registers the server with the AI
-hosts it finds on that machine (Claude Code, Claude Desktop, Cursor) — no
-`mcpServers` block to paste by hand (printing one is the fallback for a host it
-doesn't detect). It asks for no API key: the wallet's unlock key goes straight
-into the OS keychain, never into a host config, and the agent opens its own
-account later by calling `register_account`. **Seed creation is deliberately
-not an MCP tool** — the mnemonic must never transit model context or
-conversation logs. That invariant survives every future revision of this spec.
+A TTY-only human ceremony: it shows the 12 words, challenges you to type
+some back, sets the spending guardrails, and registers
+the server with the AI hosts it finds on that machine (Claude Code, Claude
+Desktop, Cursor) — no `mcpServers` block to paste by hand (printing one is the
+fallback for a host it doesn't detect). It asks for no API key: the wallet's
+unlock key goes straight into the OS keychain, never into a host config, and
+the agent opens its own account later by calling `register_account`. The words
+aren't gone after that one showing — `npx -y @depixapp/mcp backup` re-displays
+them (it asks for the passphrase and clears the screen when done). **Seed
+creation is deliberately not an MCP tool** — the mnemonic must never transit
+model context or conversation logs. That invariant survives every future
+revision of this spec.
+
+The CLI has a few other subcommands too — `backup`, `login`/`logout`, `account
+status|use` — full docs on those land in a later revision of this page.
 
 Environment variables exist too, but `init` and `register_account` are the
 path — none of the following are required to get started. They're an advanced
@@ -63,7 +69,7 @@ fallback (a pre-existing key, a headless box with no keychain, CI):
 
 | Variable | Meaning |
 |---|---|
-| `DEPIX_API_KEY` | `sk_test_` / `sk_live_`, forwarded verbatim to the REST API. Unnecessary once `register_account` has opened the account. |
+| `DEPIX_API_KEY` | `sk_test_` / `sk_live_`, forwarded verbatim to the REST API. Overrides the account `register_account` opened — unset it (and restart) to operate the new one. |
 | `DEPIX_WALLET_PASSPHRASE` | Unlocks the seed created by `init`. Usually unnecessary — `init` stores the unlock key in the OS keychain — but still honoured when set. **Never put a real passphrase in a host config file**; this is for the cases the keychain can't cover. |
 | `DEPIX_WALLET_DIR` | Optional — where the encrypted wallet lives; defaults to the per-user data directory. |
 
