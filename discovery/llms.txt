@@ -83,6 +83,15 @@ in-process, so whichever process runs a wallet tool IS the seed holder, and
 DePix App holds no seeds. stdio is the only default-safe transport for level 2
 — the server loads the seed process-wide and has no auth of its own.
 
+Four more human subcommands sit beside `init`, none of them MCP tools either:
+`backup` re-displays those 12 words under the same terminal-only rite,
+`login`/`logout` link and unlink the OPERATOR's own DePix account through a
+browser sign-in that returns to 127.0.0.1 on that same machine (on 2.8.0 and
+2.8.1 it needs `DEPIX_WORKOS_CLIENT_ID` set to the sign-in application; from
+2.8.2 the right id is baked in), and `account status|use` reports and selects
+which account the server acts as — `DEPIX_API_KEY` in the environment outranks
+any selection.
+
 - [npm package](https://www.npmjs.com/package/@depixapp/mcp): `npx -y @depixapp/mcp`
 - [MCP repository](https://github.com/depixapp/depix-mcp): source, README and usage
 
