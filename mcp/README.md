@@ -60,8 +60,23 @@ creation is deliberately not an MCP tool** — the mnemonic must never transit
 model context or conversation logs. That invariant survives every future
 revision of this spec.
 
-The CLI has a few other subcommands too — `backup`, `login`/`logout`, `account
-status|use` — full docs on those land in a later revision of this page.
+### The five subcommands
+
+`init` is one of five, all reached through the same bin. **None of them is an
+MCP tool.** Two display a seed, which must never transit model context; the
+other three decide which account the server acts as, and as tools an injected
+agent could use them to promote itself from its own sandbox account to the
+operator's.
+
+| Command | What it does | Safety note |
+|---|---|---|
+| `init` | Creates or restores the wallet and wires the AI hosts on this machine | Refuses to run unless stdin and stdout are a real terminal — that refusal is what keeps the 12 words out of a pipe, a log or a CI job |
+| `backup` | Displays this wallet's 12 words again | Same terminal-only rule; the passphrase is typed every time, even where the keychain unlocks the wallet by itself, and the screen is wiped afterwards |
+| `login` / `logout` | Signs the **operator** in to their own DePix account through the browser (Google or GitHub), or removes that session from the machine | The sign-in comes back to `127.0.0.1` on that same machine, and no token is printed, logged or returned in an error. On 2.8.0 and 2.8.1 it needs `DEPIX_WORKOS_CLIENT_ID` set to the sign-in application; from 2.8.2 the right id is baked in |
+| `account status` / `account use agent\|owner` | Reports which account the server acts as and why, or selects one | `DEPIX_API_KEY` in the server's environment outranks any selection — `status` says so rather than leaving it implicit |
+
+Full walkthroughs — flags, prompts, precedence — are in the package README at
+[`depixapp/depix-mcp`](https://github.com/depixapp/depix-mcp).
 
 Environment variables exist too, but `init` and `register_account` are the
 path — none of the following are required to get started. They're an advanced
