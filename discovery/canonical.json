@@ -5,7 +5,7 @@
     "agent_json": "https://depixapp.com/.well-known/agent.json",
     "llms_txt": "https://depixapp.com/llms.txt"
   },
-  "openapi_version": "0.34.0",
+  "openapi_version": "0.44.0",
   "agent_manifest_version": "0.5.1",
   "agent_sdk_version": "1.2.1",
   "mcp_tool_count": 26,

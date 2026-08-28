@@ -7,7 +7,7 @@ This page is a pointer and a disambiguation.
 ## ONE server, TWO levels of access
 
 There is one DePix MCP server: **`@depixapp/mcp`** (Apache-2.0, registry id
-`io.github.depixapp/depix-mcp`). It registers **49 tools**. Which of them
+`io.github.depixapp/depix-mcp`). It registers **59 tools**. Which of them
 actually work depends on nothing but where the server runs and whether that
 process holds a wallet seed.
 
@@ -17,7 +17,7 @@ process holds a wallet seed.
 | Who runs it | DePix App | the operator, where the agent lives |
 | Transport | Streamable HTTP at `https://mcp.depixapp.com/mcp` (stateless) | stdio — `npx -y @depixapp/mcp` |
 | Seed | **none** | the operator's |
-| Tools | **22** — 16 merchant/gateway + 6 support-ticket | **49** — the same 22 + 27 `wallet_*` |
+| Tools | **26** — 20 merchant/gateway + 6 support-ticket | **59** — the same 26 + 29 `wallet_*` + 4 agent-local |
 | Moves funds? | **No** — it cannot create deposits or withdrawals | **Yes** — signed in-process with the operator's key |
 | Auth | OAuth 2.1 connector, or `Authorization: Bearer sk_…` | `DEPIX_API_KEY` + `DEPIX_WALLET_PASSPHRASE` in the environment |
 | Custody | non-custodial (holds nothing) | non-custodial (the operator holds the seed) |
@@ -25,9 +25,11 @@ process holds a wallet seed.
 **The split is custody, not features withheld.** Every spend materialises the
 signer in-process; there is no remote/delegate-sign path. So whichever process
 executes a fund-moving tool **is** the seed holder. DePix App will not hold
-seeds, therefore the hosted deployment can only ever expose the keyless 22 —
-physics, not a product decision. The 27 `wallet_*` tools are structurally
-absent from the hosted build (separate import graph), not merely disabled.
+seeds, therefore the hosted deployment can only ever expose the keyless 26 —
+physics, not a product decision. The 29 `wallet_*` tools are structurally
+absent from the hosted build (separate import graph), not merely disabled, and
+so are the 4 agent-local tools — the hosted catalog never offers account
+registration.
 
 The hosted level is a **pure client of the public DePix App API** — it holds no
 critical credentials and goes through the same auth, scopes and rate limits as
@@ -55,17 +57,17 @@ Environment:
 
 | Variable | Required | Meaning |
 |---|---|---|
-| `DEPIX_API_KEY` | for the 22 gateway tools | `sk_test_` / `sk_live_`, forwarded verbatim to the REST API |
-| `DEPIX_WALLET_PASSPHRASE` | for the 27 wallet tools | unlocks the seed created by `init` |
+| `DEPIX_API_KEY` | for the 26 gateway tools | `sk_test_` / `sk_live_`, forwarded verbatim to the REST API |
+| `DEPIX_WALLET_PASSPHRASE` | for the 29 wallet tools | unlocks the seed created by `init` |
 | `DEPIX_WALLET_DIR` | optional | where the encrypted wallet lives; defaults to the per-user data directory |
 
 Without a configured wallet the `wallet_*` tools stay **listed** and return a
-typed `wallet_not_configured` error naming `init`. The catalog is static at 49
+typed `wallet_not_configured` error naming `init`. The catalog is static at 59
 on the local level on purpose: MCP hosts snapshot `tools/list` at connect and
 `list_changed` support is uneven, so a catalog that grew after `init` would
 mean "restart your client".
 
-## The 22 gateway tools (both levels)
+## The 26 gateway tools (both levels)
 
 - Checkouts (5): `create_checkout`, `get_checkout`, `list_checkouts`,
   `simulate_checkout_payment` (sandbox only), `wait_for_checkout`
@@ -75,19 +77,21 @@ mean "restart your client".
 - Account (1): `get_account`
 - Pay-status, read-only (2, scope `wallet_read`): `get_deposit_status`,
   `get_withdrawal_status`
+- Merchant state (4): `get_onboarding_status`, `update_merchant_profile`,
+  `get_vault_status` (the Cofre hold window), `list_webhook_logs`
 - Support tickets (6, no scope): `open_support_ticket`, `get_support_ticket`,
   `list_support_tickets`, `reply_support_ticket`, `close_support_ticket`,
   `attach_support_ticket_file` (attach ONE file — base64, up to ~3 MB — to a
   ticket; counts as a reply)
 
-## The 27 wallet tools (level 2 only)
+## The 29 wallet tools (level 2 only)
 
 These **move funds** with the operator's key, under guardrails the operator
 sets.
 
-- State (8): `wallet_status`, `wallet_get_balances`, `wallet_get_address`,
+- State (10): `wallet_status`, `wallet_get_balances`, `wallet_get_address`,
   `wallet_list_transactions`, `wallet_pending`, `wallet_get_guardrails`,
-  `wallet_diagnostics`, `wallet_recover`
+  `wallet_diagnostics`, `wallet_recover`, `wallet_sync`, `wallet_list_utxos`
 - Pix on/off-ramp (4): `wallet_create_deposit`, `wallet_wait_deposit`,
   `wallet_create_withdrawal`, `wallet_wait_withdrawal`
 - Move & convert (7): `wallet_send`, `wallet_quote`, `wallet_convert`,
@@ -98,20 +102,28 @@ sets.
   `wallet_giftcard_price`, `wallet_buy_giftcard`, `wallet_list_giftcard_orders`,
   `wallet_get_giftcard_order_status`
 
-The authoritative lists are `src/server.ts` (the hosted 22) and
-`src/vendor/depix-sdk/mcp/server.ts` (the 27 `wallet_*`) in `depix-mcp`; the
-counts here are kept honest by the discovery drift guards (see the repo root
-README).
+## The 4 agent-local tools (level 2 only)
+
+`register_account`, `agent_status`, `verify_domain`, `configure_depix_rail` —
+they self-onboard the account on this machine (the Ed25519 keypair stays here,
+see [`../signing/agent-auth.md`](../signing/agent-auth.md)) and toggle its DePix
+direct rail. They are absent from the hosted level because registration is the
+one thing an operator's own process must do for itself.
+
+The authoritative lists are `src/server.ts` (the 26 gateway),
+`src/agent-tools.ts` (the 4 agent-local) and `src/wallet-engine/mcp/server.ts`
+(the 29 `wallet_*`) in `depix-mcp`; the counts here are kept honest by the
+discovery drift guards (see the repo root README).
 
 ## Registry / discovery files (in `depix-mcp`)
 
 - `registry/server.json` — the Model Context Protocol registry manifest (the
   seed for catalog listings). ONE entry: `remotes[]` carries the hosted
-  keyless endpoint, `packages[]` carries the npm package with all 49 tools.
+  keyless endpoint, `packages[]` carries the npm package with all 59 tools.
 - `/.well-known/mcp.json` — served live from the hosted deployment.
 
 The registry schema has no per-remote/per-package tool field, so a client that
-adds only the `mcp.depixapp.com` remote silently gets 22 (no wallet). That
+adds only the `mcp.depixapp.com` remote silently gets 26 (no wallet). That
 delta is not machine-expressible today — it is disambiguated in the entry's
 description and here.
 
@@ -147,8 +159,8 @@ pasted into any third-party endpoint.
 
 ## Code-level lineage
 
-[`@depixapp/sdk`](https://www.npmjs.com/package/@depixapp/sdk) (AGPL-3.0, 1.2.1)
-is the code-level lineage of the same wallet engine that powers the 27
-`wallet_*` tools. It stays published for code-first integrations, and the
-tarball ships `AGENTS.md` (routing table, units, examples). When an **agent** is
-driving, connect `@depixapp/mcp` instead — that is the successor public surface.
+The wallet engine behind the 29 `wallet_*` tools now lives in `depix-mcp` itself,
+under `src/wallet-engine/`. `@depixapp/sdk` (AGPL-3.0) was its earlier home; it
+is frozen at 1.2.1 and its repository is being archived. Do not start there:
+`@depixapp/mcp` is the successor public surface for agents and for code-first
+integrations alike.

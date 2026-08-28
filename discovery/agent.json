@@ -32,7 +32,7 @@
       "merchant_*": "Merchant/gateway side — read checkouts, products, charges and account (merchant_read); create checkouts and CRUD products/charges (merchant_write). A charge is a product with kind='charge': a payment link with a due date and optional late fees, listed only with kind=charge.",
       "wallet_*": "Wallet side — read deposit/withdrawal status (wallet_read); move money via on/off-ramp Pix (wallet_write). Never granted by default."
     },
-    "how_to_obtain": "Two paths. Human merchants: create an account at https://depixapp.com/app/, open a merchant profile, then create keys in the API Keys area (sandbox keys are immediate). Agent accounts: self-onboard with no email and no dashboard — generate an Ed25519 keypair and call POST /api/agents/register signing the request with it, passing an operator op_… token (a human obtains it once by connecting a GitHub/Google identity in the dashboard); a sandbox key and a wallet-only starter live key are auto-issued in the registration response. See agent_onboarding below and https://depixapp.com/docs/en/#agents."
+    "how_to_obtain": "Two paths. Human merchants: create an account at https://depixapp.com/app/, open a merchant profile, then create keys in the API Keys area (sandbox keys are immediate). Agent accounts: self-onboard with no email and no dashboard — generate an Ed25519 keypair and call POST /api/agents/register signing the request with it, passing an operator op_… token (a human obtains it once by connecting a GitHub/Google identity at https://api.depixapp.com/api/agents/oauth/start); a sandbox key and a wallet-only starter live key are auto-issued in the registration response. See agent_onboarding below and https://depixapp.com/docs/en/#agents."
   },
   "capabilities": [
     "create_checkout",
@@ -134,7 +134,7 @@
   },
   "agent_onboarding": {
     "summary": "Agents can self-onboard via /api/agents/* instead of a human creating keys in the dashboard.",
-    "auth": "Per-request Ed25519 signature over the agent's own keypair, plus an operator token (op_…) a human obtains once by connecting an identity in the dashboard.",
+    "auth": "Per-request Ed25519 signature over the agent's own keypair, plus an operator token (op_…) a human obtains once by connecting an identity at https://api.depixapp.com/api/agents/oauth/start.",
     "status_endpoint": "GET /api/agents/status — account status, graduation progress and the read-only `pacing` limits, so the agent can pace itself instead of discovering caps through 4xx.",
     "docs": "https://depixapp.com/docs/en/"
   }

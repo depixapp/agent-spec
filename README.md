@@ -5,7 +5,7 @@ collections** for building agents on the [DePix App](https://depixapp.com) API �
 the non-custodial Pix↔DePix payment gateway on the Liquid Network.
 
 > **This repo is deliberately thin.** The canonical, living sources of truth live
-> at depixapp.com and in the SDK/MCP repos. This repo holds only what does **not**
+> at depixapp.com and in the MCP repo. This repo holds only what does **not**
 > live anywhere else: the precise request-signing spec, cryptographic test
 > vectors, runnable verifiers, and collections generated from the live OpenAPI.
 > Everything here is guarded against drift in CI.
@@ -17,8 +17,7 @@ the non-custodial Pix↔DePix payment gateway on the Liquid Network.
 | Machine-readable API schema | <https://api.depixapp.com/openapi.json> (OpenAPI 3.1) |
 | Agent quickstart / discovery | <https://depixapp.com/llms.txt> · <https://depixapp.com/.well-known/agent.json> |
 | Human API reference | <https://depixapp.com/docs/en/> |
-| MCP server (one server, two levels — 22 hosted / 49 local) | <https://github.com/depixapp/depix-mcp> |
-| Wallet SDK (code-level lineage of the same engine) | <https://www.npmjs.com/package/@depixapp/sdk> |
+| MCP server (one server, two levels — 26 hosted / 59 local) | <https://github.com/depixapp/depix-mcp> |
 
 ## What lives here (and nowhere else)
 
@@ -26,7 +25,7 @@ the non-custodial Pix↔DePix payment gateway on the Liquid Network.
 signing/
   agent-auth.md            Normative Ed25519 request-signing spec (the canonical string)
   webhook-signature.md     Outbound webhook signature (X-DePix-Signature) + retry policy
-  limits.md                SDK client-side guardrails vs server-side agent pacing
+  limits.md                Client-side wallet guardrails vs server-side agent pacing
   vectors/
     agent-auth.json        TEST-ONLY key -> signed requests (GET, POST, empty-body edge case)
     webhook.json           TEST-ONLY secret + payload -> expected HMAC
@@ -65,10 +64,9 @@ An agent moves through three stages; this repo supports each.
    [example](./examples/verify-webhook/)), and pace against your account's live
    limits ([`signing/limits.md`](./signing/limits.md)). DePix is
    **non-custodial** end to end: the API never holds funds or keys, and the
-   companion wallet — the 27 `wallet_*` tools in
-   [`@depixapp/mcp`](https://github.com/depixapp/depix-mcp), or the
-   [`@depixapp/sdk`](https://www.npmjs.com/package/@depixapp/sdk) library that
-   shares their engine — signs transactions with a seed the agent controls.
+   companion wallet — the 29 `wallet_*` tools in
+   [`@depixapp/mcp`](https://github.com/depixapp/depix-mcp) — signs transactions
+   with a seed the agent controls.
 
 ## Run it locally
 

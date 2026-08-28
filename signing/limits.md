@@ -7,13 +7,13 @@ live source of truth for the numbers.
 
 ---
 
-## 1. SDK client-side guardrails (agent-side, in the wallet SDK)
+## 1. Client-side guardrails (agent-side, in the wallet engine)
 
-These live **inside the agent**, in the `@depixapp/sdk` wallet. They are the
-owner's ceilings on the agent's own spending, and their job is to contain a
-**prompt-injected or hallucinating agent** — not a malicious owner (who controls
-the process anyway). They are checked before the SDK signs any money-moving
-operation.
+These live **inside the agent**, in the wallet engine that the local
+`@depixapp/mcp` runs. They are the owner's ceilings on the agent's own spending,
+and their job is to contain a **prompt-injected or hallucinating agent** — not a
+malicious owner (who controls the process anyway). They are checked before the
+engine signs any money-moving operation.
 
 | Guardrail | Default | Env override |
 |---|---|---|
@@ -36,7 +36,7 @@ Precedence is `option > env > default`, resolved per field. Key properties:
   class that was not opted in is denied. Default is disabled, i.e. only the value
   ceilings apply.
 
-Source: `depix-sdk` `src/guardrails/config.ts`.
+Source: `depix-mcp` `src/wallet-engine/guardrails/config.ts`.
 
 ---
 
@@ -53,11 +53,14 @@ The fields (integer BRL cents unless noted):
 |---|---|
 | `first_deposit_max_cents` | Cap on the account's very first deposit. |
 | `unverified_per_tx_max_cents` | Per-deposit cap before verification. |
-| `unverified_lifetime_max_cents` | Cumulative deposit cap before verification. |
 | `inter_deposit_delay_hours` | Settlement delay applied to deposits 2–5 of an unverified account (the DePix payout is held this many hours). |
 | `payer_velocity` | Per-payer deposit velocity gate: `{ max_per_window, window_minutes }`. |
 | `verified_per_tx_deposit_max_cents` | Per-deposit cap after verification. |
 | `verified_per_tx_withdraw_max_cents` | Per-withdrawal cap after verification. |
+
+There is no cumulative lifetime ceiling in this envelope. An agent still holding
+a hardcoded `unverified_lifetime_max_cents` would be pacing itself against a cap
+the API no longer sends — read the fields above and branch on what is there.
 
 ### Read your live caps — do not hardcode these numbers
 
@@ -107,12 +110,13 @@ levels of access (see [`../mcp/README.md`](../mcp/README.md)). Pick by whether
 the agent needs a key to the money:
 
 - **Level 1 — hosted.** `https://mcp.depixapp.com/mcp`, Streamable HTTP,
-  **22 tools**. Reads and creates checkouts, products and charges (dated
+  **26 tools**. Reads and creates checkouts, products and charges (dated
   payment links) and reads pay-status; it
   **cannot move funds** — this deployment holds no seed, so the `wallet_*`
   tools are structurally absent from it.
 - **Level 2 — local.** `npx -y @depixapp/mcp` over stdio, run where the agent
-  lives, **49 tools**. The extra 27 `wallet_*` tools expose the operator's own
+  lives, **59 tools**. The extra 29 `wallet_*` tools expose the operator's own
   non-custodial wallet and **do move funds**, signed in-process with the
-  operator's key. The guardrails in §1 apply here. First run is
+  operator's key; 4 more are agent-local (registration, domain proof, the DePix
+  rail). The guardrails in §1 apply here. First run is
   `npx -y @depixapp/mcp init`; the seed never leaves that machine.

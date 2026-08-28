@@ -2,7 +2,7 @@
   "info": {
     "name": "DePix — core flow",
     "_postman_id": "depix-agent-spec-core-0001",
-    "description": "Generated from the live DePix OpenAPI (3.1.0, info.version 0.34.0) by collections/gen-collections.mjs. Set {{apiKey}} to an sk_test_/sk_live_ key. Do not hand-edit — regenerate.",
+    "description": "Generated from the live DePix OpenAPI (3.1.0, info.version 0.44.0) by collections/gen-collections.mjs. Set {{apiKey}} to an sk_test_/sk_live_ key. Do not hand-edit — regenerate.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -76,7 +76,7 @@
             "checkouts"
           ]
         },
-        "description": "Paginated checkout list for the authenticated merchant, filtered to the key's mode (sk_test_ sees only sandbox checkouts). Requires scope `merchant_read` on the API-key path.\n\n**This list is paginated and `limit` caps at 100.** `stats` is computed over the WHOLE filter, not over the page, so `stats.total` is what tells you whether you have every row — summing `amount` across one page and calling it a total is how a reconciliation silently comes out short.\n\n**Held sales**: a sale whose money is not released yet stays in `processing` and carries `vault_hours` (the wait it was booked for) and, once the provider answers, `delay_until` (the release date). `?status=processing` with `vault_hours > 0` or a `delay_until` is the reconciliation query for \"paid, not settled yet\" — an amount already earned that has not landed. On a sale the hold policy decided not to hold, `vault_hours` is `0` and `delay_until` is null; on one it never saw, `vault_hours` is null too (see the field description — null is not zero)."
+        "description": "Paginated checkout list for the authenticated merchant, filtered to the key's mode (sk_test_ sees only sandbox checkouts). Requires scope `merchant_read` on the API-key path.\n\n**This list is paginated and `limit` caps at 100.** `stats` is computed over the WHOLE filter, not over the page, so `stats.total` is what tells you whether you have every row — summing `amount` across one page and calling it a total is how a reconciliation silently comes out short.\n\n**Held sales**: a sale whose money is not released yet stays in `processing` and carries `vault_hours` (the wait it was booked for) and, once the provider answers, `delay_until` (the release date). `?status=processing` with `vault_hours > 0` or a `delay_until` is the reconciliation query for \"paid, not settled yet\" — money received but not landed, and until it lands the provider can still reverse it (see `rejection_reasons`). On a sale the hold policy decided not to hold, `vault_hours` is `0` and `delay_until` is null; on one it never saw, `vault_hours` is null too (see the field description — null is not zero)."
       }
     },
     {
@@ -100,7 +100,7 @@
             "{{checkoutId}}"
           ]
         },
-        "description": "Full checkout detail (owner view). `pix_payload` is present only while pending. Poll until a terminal status (see the status enum) or subscribe to checkout.* webhooks. Requires scope `merchant_read` on the API-key path."
+        "description": "Full checkout detail (owner view). `pix_payload` is present only while pending. Poll until a terminal status (see the status enum) or subscribe to checkout.* webhooks. Requires scope `merchant_read` on the API-key path.\n\n`processing` means the payer's money reached us — it does NOT mean the money has landed in the merchant's wallet, and a checkout can sit there for days while a hold runs. It is also not a settled outcome: a sale in `processing` can still resolve to `cancelled` (a refunded or reversed payment — see `rejection_reasons`). `delay_until` says when the money lands (null until the provider answers with a date) and `vault_hours` says whether it was held at all. Releasing the order at `processing` or waiting for `completed` is the merchant's own policy; this endpoint publishes the facts either choice needs."
       }
     },
     {

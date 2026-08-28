@@ -233,10 +233,10 @@ This document is derived from the production implementation:
 
 - Verifier: `depix-backend` `api/_lib/agent-auth.js` — `buildCanonicalString`,
   `getRawBody`, `verifyAgentSignature`, `authenticateAgentRequest`.
-- Signer: `depix-sdk` `src/agent/keypair.ts` — `buildCanonicalString`,
-  `canonicalBody`, `signAgentRequest`.
-- Parity harness (reproduces the server verifier): `depix-sdk`
-  `test/agent-server-parity.test.ts`.
+- Signer: `depix-mcp` `src/wallet-engine/agent/keypair.ts` —
+  `buildCanonicalString`, `canonicalBody`, `signAgentRequest`.
+- Parity harness (reproduces the server verifier): `depix-mcp`
+  `test/wallet-engine/agent-server-parity.test.ts`.
 
 If this document and the running API ever disagree, the API wins — open an issue
 and the discrepancy will be reconciled here.
