@@ -80,7 +80,7 @@
     "install": "npm install @depixapp/sdk",
     "npm": "https://www.npmjs.com/package/@depixapp/sdk",
     "manifest_note": "AGENTS.md (the start-here guide for agents — routing table, units, examples) ships inside the npm tarball.",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "relationship": "Same engine, two surfaces. `@depixapp/mcp` (Apache-2.0) is the agent-facing surface and the one to reach for; this SDK is the code-level lineage of its wallet engine and stays published for code-first integrations. This REST API is the Pix on/off-ramp and merchant side that both consume.",
     "lightning": "lightning_pay / lightning_receive settle through Boltz swaps; DePix itself is not issued on Lightning."
   },
@@ -124,10 +124,10 @@
       "tool_count_local": 4,
       "environment_variables": {
         "DEPIX_API_KEY": "required for the 26 gateway tools — sk_test_ / sk_live_.",
-        "DEPIX_WALLET_PASSPHRASE": "required for the 29 wallet tools — unlocks the seed created by `init`. Absent, the wallet tools stay listed and return a typed `wallet_not_configured` error naming `npx -y @depixapp/mcp init`.",
+        "DEPIX_WALLET_PASSPHRASE": "unlocks the seed created by `init` for the 29 wallet tools. Usually unnecessary — `init` stores the unlock key in the OS keychain — but still honoured when set. With no wallet at all, the wallet tools stay listed and return a typed `wallet_not_configured` error naming `npx -y @depixapp/mcp init`.",
         "DEPIX_WALLET_DIR": "optional — where the encrypted wallet lives; defaults to the per-user data directory."
       },
-      "first_run": "`npx -y @depixapp/mcp init` — a TTY-only human ceremony that creates or restores the wallet and prints the paste-ready `mcpServers` block. Seed creation is deliberately NOT an MCP tool: the mnemonic must never transit model context or conversation logs.",
+      "first_run": "`npx -y @depixapp/mcp init` — a TTY-only human ceremony that creates or restores the wallet, sets the spending guardrails, and registers the server with the AI hosts found on that machine, so no `mcpServers` block has to be pasted by hand (printing one is the fallback). It asks for no API key and never writes the passphrase into a host config: the OS keychain holds the unlock key, and the agent opens its own account later with `register_account`. Seed creation is deliberately NOT an MCP tool: the mnemonic must never transit model context or conversation logs.",
       "transport_safety": "stdio is the only default-safe transport for this level. The server loads the seed process-wide and carries no auth of its own; exposing it over HTTP without operator-provided auth + network isolation lets anyone who reaches the port drain the wallet.",
       "summary": "The same server, run where the agent lives, holding the operator's seed. Adds 29 `wallet_*` tools (balances, addresses, Pix on/off-ramp, send, convert, Lightning, gift cards, guardrails, recovery, utxos, sync) that MOVE FUNDS, signed in-process on the operator's machine, plus 4 agent-local tools (register_account, agent_status, verify_domain, configure_depix_rail) for 59 total. Non-custodial: the seed never leaves it."
     }

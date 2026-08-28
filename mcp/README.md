@@ -161,6 +161,6 @@ pasted into any third-party endpoint.
 
 The wallet engine behind the 29 `wallet_*` tools now lives in `depix-mcp` itself,
 under `src/wallet-engine/`. `@depixapp/sdk` (AGPL-3.0) was its earlier home; it
-is frozen at 1.2.1 and its repository is being archived. Do not start there:
+is frozen at 1.2.2 and its repository has been archived. Do not start there:
 `@depixapp/mcp` is the successor public surface for agents and for code-first
 integrations alike.

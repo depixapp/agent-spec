@@ -73,8 +73,13 @@ depends only on where it runs and whether that process holds a wallet seed:
 
 First run is a human terminal ceremony, never an MCP tool — the mnemonic must
 not transit model context: **`npx -y @depixapp/mcp init`** creates or restores
-the wallet and prints the paste-ready `mcpServers` block. The split between the
-levels is custody, not withheld features: signing happens in-process, so
+the wallet, sets the spending guardrails, and registers the server with the AI
+hosts it finds on that machine, so there is no `mcpServers` block to paste by
+hand (it falls back to printing one). The rite asks for no API key and never
+writes the passphrase into a host config: the OS keychain holds the unlock key,
+and the agent opens its own DePix account later with `register_account`. The
+split between the levels is custody, not withheld features: signing happens
+in-process, so
 whichever process runs a wallet tool IS the seed holder, and DePix App holds no
 seeds. stdio is the only default-safe transport for level 2 — the server loads
 the seed process-wide and has no auth of its own.
@@ -86,7 +91,7 @@ the seed process-wide and has no auth of its own.
 
 `@depixapp/mcp` is the surface to reach for when an agent is driving. When YOU
 are writing the code, the same wallet engine is also published as
-**`@depixapp/sdk`** (TypeScript, ESM, AGPL-3.0, 1.2.1) — wallet-first and
+**`@depixapp/sdk`** (TypeScript, ESM, AGPL-3.0, 1.2.2) — wallet-first and
 intent-based: create/restore a wallet from a seed the agent controls, then call
 `convert()`, `quote()`, `send()`, `receive()`, `deposit()` and `withdraw()`.
 Routing (SideSwap / Boltz / SideShift), settlement and crash-recovery are built
