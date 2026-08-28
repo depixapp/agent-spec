@@ -19,7 +19,7 @@ process holds a wallet seed.
 | Seed | **none** | the operator's |
 | Tools | **26** — 20 merchant/gateway + 6 support-ticket | **59** — the same 26 + 29 `wallet_*` + 4 agent-local |
 | Moves funds? | **No** — it cannot create deposits or withdrawals | **Yes** — signed in-process with the operator's key |
-| Auth | OAuth 2.1 connector, or `Authorization: Bearer sk_…` | `DEPIX_API_KEY` + `DEPIX_WALLET_PASSPHRASE` in the environment |
+| Auth | OAuth 2.1 connector, or `Authorization: Bearer sk_…` | none to configure — `init` creates the wallet, self-registers the account (`register_account`), and stores the unlock key in the OS keychain |
 | Custody | non-custodial (holds nothing) | non-custodial (the operator holds the seed) |
 
 **The split is custody, not features withheld.** Every spend materialises the
@@ -48,18 +48,24 @@ npx -y @depixapp/mcp init --restore  # import an existing mnemonic
 ```
 
 A TTY-only human ceremony: it prints the 12 words once, challenges you to type
-some back, and finishes by printing the exact `mcpServers` block to paste into
-the agent's client. **Seed creation is deliberately not an MCP tool** — the
-mnemonic must never transit model context or conversation logs. That invariant
-survives every future revision of this spec.
+some back, sets the spending guardrails, and registers the server with the AI
+hosts it finds on that machine (Claude Code, Claude Desktop, Cursor) — no
+`mcpServers` block to paste by hand (printing one is the fallback for a host it
+doesn't detect). It asks for no API key: the wallet's unlock key goes straight
+into the OS keychain, never into a host config, and the agent opens its own
+account later by calling `register_account`. **Seed creation is deliberately
+not an MCP tool** — the mnemonic must never transit model context or
+conversation logs. That invariant survives every future revision of this spec.
 
-Environment:
+Environment variables exist too, but `init` and `register_account` are the
+path — none of the following are required to get started. They're an advanced
+fallback (a pre-existing key, a headless box with no keychain, CI):
 
-| Variable | Required | Meaning |
-|---|---|---|
-| `DEPIX_API_KEY` | for the 26 gateway tools | `sk_test_` / `sk_live_`, forwarded verbatim to the REST API |
-| `DEPIX_WALLET_PASSPHRASE` | for the 29 wallet tools | unlocks the seed created by `init` |
-| `DEPIX_WALLET_DIR` | optional | where the encrypted wallet lives; defaults to the per-user data directory |
+| Variable | Meaning |
+|---|---|
+| `DEPIX_API_KEY` | `sk_test_` / `sk_live_`, forwarded verbatim to the REST API. Unnecessary once `register_account` has opened the account. |
+| `DEPIX_WALLET_PASSPHRASE` | Unlocks the seed created by `init`. Usually unnecessary — `init` stores the unlock key in the OS keychain — but still honoured when set. **Never put a real passphrase in a host config file**; this is for the cases the keychain can't cover. |
+| `DEPIX_WALLET_DIR` | Optional — where the encrypted wallet lives; defaults to the per-user data directory. |
 
 Without a configured wallet the `wallet_*` tools stay **listed** and return a
 typed `wallet_not_configured` error naming `init`. The catalog is static at 59
@@ -138,24 +144,38 @@ claude mcp add --transport http depix https://mcp.depixapp.com/mcp \
 
 Level 2 — local, the full wallet:
 
+```
+npx -y @depixapp/mcp init
+```
+
+That's the whole setup. `init` creates the wallet, stores its unlock key in
+the OS keychain, and writes the `mcpServers` entry into every AI host it finds
+on the machine — nothing to hand-edit, no key to obtain first, no passphrase to
+paste. The agent opens its own sandbox/live account afterwards with
+`register_account`; there's no `DEPIX_API_KEY` to configure up front.
+
+Only if a host isn't auto-detected does `init` fall back to printing a block to
+paste by hand, and that block carries no secret — no API key, no passphrase:
+
 ```json
 {
   "mcpServers": {
     "depix": {
       "command": "npx",
-      "args": ["-y", "@depixapp/mcp"],
-      "env": {
-        "DEPIX_API_KEY": "sk_test_...",
-        "DEPIX_WALLET_PASSPHRASE": "<the passphrase you typed>"
-      }
+      "args": ["-y", "@depixapp/mcp"]
     }
   }
 }
 ```
 
-Use an `sk_test_` key for sandbox and `sk_live_` for production. The canonical
-hosted URL is **`https://mcp.depixapp.com/mcp`** — your `sk_` key should never be
-pasted into any third-party endpoint.
+The environment variables in the table above (`DEPIX_API_KEY`,
+`DEPIX_WALLET_PASSPHRASE`) exist only for the advanced cases that fallback
+covers — never as something to type into a config file by default.
+
+Where an `sk_` key is in play at all (level 1, or level 2's fallback), use
+`sk_test_` for sandbox and `sk_live_` for production. The canonical hosted URL
+is **`https://mcp.depixapp.com/mcp`** — your `sk_` key should never be pasted
+into any third-party endpoint.
 
 ## Code-level lineage
 

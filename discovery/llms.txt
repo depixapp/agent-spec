@@ -79,10 +79,9 @@ hand (it falls back to printing one). The rite asks for no API key and never
 writes the passphrase into a host config: the OS keychain holds the unlock key,
 and the agent opens its own DePix account later with `register_account`. The
 split between the levels is custody, not withheld features: signing happens
-in-process, so
-whichever process runs a wallet tool IS the seed holder, and DePix App holds no
-seeds. stdio is the only default-safe transport for level 2 — the server loads
-the seed process-wide and has no auth of its own.
+in-process, so whichever process runs a wallet tool IS the seed holder, and
+DePix App holds no seeds. stdio is the only default-safe transport for level 2
+— the server loads the seed process-wide and has no auth of its own.
 
 - [npm package](https://www.npmjs.com/package/@depixapp/mcp): `npx -y @depixapp/mcp`
 - [MCP repository](https://github.com/depixapp/depix-mcp): source, README and usage
