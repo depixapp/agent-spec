@@ -2,7 +2,7 @@
   "info": {
     "name": "DePix — core flow",
     "_postman_id": "depix-agent-spec-core-0001",
-    "description": "Generated from the live DePix OpenAPI (3.1.0, info.version 0.46.0) by collections/gen-collections.mjs. Set {{apiKey}} to an sk_test_/sk_live_ key. Do not hand-edit — regenerate.",
+    "description": "Generated from the live DePix OpenAPI (3.1.0, info.version 0.47.0) by collections/gen-collections.mjs. Set {{apiKey}} to an sk_test_/sk_live_ key. Do not hand-edit — regenerate.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [

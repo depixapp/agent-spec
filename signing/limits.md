@@ -55,8 +55,15 @@ The fields (integer BRL cents unless noted):
 | `unverified_per_tx_max_cents` | Per-deposit cap before verification. |
 | `inter_deposit_delay_hours` | Settlement delay applied to deposits 2–5 of an unverified account (the DePix payout is held this many hours). |
 | `payer_velocity` | Per-payer deposit velocity gate: `{ max_per_window, window_minutes }`. |
-| `verified_per_tx_deposit_max_cents` | Per-deposit cap after verification. |
-| `verified_per_tx_withdraw_max_cents` | Per-withdrawal cap after verification. |
+| `verified_per_tx_deposit_max_cents` | Per-deposit cap after verification, on `amountInCents`. |
+| `verified_per_tx_withdraw_send_max_cents` | Per-withdrawal cap after verification, on `depositAmountInCents` — what the wallet sends. |
+| `verified_per_tx_withdraw_receive_max_cents` | Per-withdrawal cap after verification, on `payoutAmountInCents` — what the destination account receives. |
+
+`POST /api/withdraw` takes exactly one of those two amounts, and the ceiling is
+the same for either: the provider bounds whichever field you send. Do not derive
+a lower receive ceiling from the fees. They come out of the provider's quote,
+which may sit above the ceiling for a payout near it, and the platform's share
+rides on top of that quote; neither total is bounded.
 
 There is no cumulative lifetime ceiling in this envelope. An agent still holding
 a hardcoded `unverified_lifetime_max_cents` would be pacing itself against a cap
