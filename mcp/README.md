@@ -7,7 +7,7 @@ This page is a pointer and a disambiguation.
 ## ONE server, TWO levels of access
 
 There is one DePix MCP server: **`@depixapp/mcp`** (Apache-2.0, registry id
-`io.github.depixapp/depix-mcp`). It registers **59 tools**. Which of them
+`io.github.depixapp/depix-mcp`). It registers **60 tools**. Which of them
 actually work depends on nothing but where the server runs and whether that
 process holds a wallet seed.
 
@@ -17,7 +17,7 @@ process holds a wallet seed.
 | Who runs it | DePix App | the operator, where the agent lives |
 | Transport | Streamable HTTP at `https://mcp.depixapp.com/mcp` (stateless) | stdio — `npx -y @depixapp/mcp` |
 | Seed | **none** | the operator's |
-| Tools | **26** — 20 merchant/gateway + 6 support-ticket | **59** — the same 26 + 29 `wallet_*` + 4 agent-local |
+| Tools | **26** — 20 merchant/gateway + 6 support-ticket | **60** — the same 26 + 29 `wallet_*` + 5 agent-local |
 | Moves funds? | **No** — it cannot create deposits or withdrawals | **Yes** — signed in-process with the operator's key |
 | Auth | OAuth 2.1 connector, or `Authorization: Bearer sk_…` | none to configure — `init` creates the wallet, registers the server with the AI hosts it finds, and stores the unlock key in the OS keychain; the agent opens the account later with `register_account` |
 | Custody | non-custodial (holds nothing) | non-custodial (the operator holds the seed) |
@@ -28,7 +28,7 @@ executes a fund-moving tool **is** the seed holder. DePix App will not hold
 seeds, therefore the hosted deployment can only ever expose the keyless 26 —
 physics, not a product decision. The 29 `wallet_*` tools are structurally
 absent from the hosted build (separate import graph), not merely disabled, and
-so are the 4 agent-local tools — the hosted catalog never offers account
+so are the 5 agent-local tools — the hosted catalog never offers account
 registration.
 
 The hosted level is a **pure client of the public DePix App API** — it holds no
@@ -89,7 +89,7 @@ fallback (a pre-existing key, a headless box with no keychain, CI):
 | `DEPIX_WALLET_DIR` | Optional — where the encrypted wallet lives; defaults to the per-user data directory. |
 
 Without a configured wallet the `wallet_*` tools stay **listed** and return a
-typed `wallet_not_configured` error naming `init`. The catalog is static at 59
+typed `wallet_not_configured` error naming `init`. The catalog is static at 60
 on the local level on purpose: MCP hosts snapshot `tools/list` at connect and
 `list_changed` support is uneven, so a catalog that grew after `init` would
 mean "restart your client".
@@ -140,7 +140,7 @@ encrypted vault and survives restarts). They are absent from the hosted level be
 one thing an operator's own process must do for itself.
 
 The authoritative lists are `src/server.ts` (the 26 gateway),
-`src/agent-tools.ts` (the 4 agent-local) and `src/wallet-engine/mcp/server.ts`
+`src/agent-tools.ts` (the 5 agent-local) and `src/wallet-engine/mcp/server.ts`
 (the 29 `wallet_*`) in `depix-mcp`; the counts here are kept honest by the
 discovery drift guards (see the repo root README).
 
@@ -148,7 +148,7 @@ discovery drift guards (see the repo root README).
 
 - `registry/server.json` — the Model Context Protocol registry manifest (the
   seed for catalog listings). ONE entry: `remotes[]` carries the hosted
-  keyless endpoint, `packages[]` carries the npm package with all 59 tools.
+  keyless endpoint, `packages[]` carries the npm package with all 60 tools.
 - `/.well-known/mcp.json` — served live from the hosted deployment.
 
 The registry schema has no per-remote/per-package tool field, so a client that
