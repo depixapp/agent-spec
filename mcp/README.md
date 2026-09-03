@@ -129,12 +129,14 @@ sets.
   `wallet_giftcard_price`, `wallet_buy_giftcard`, `wallet_list_giftcard_orders`,
   `wallet_get_giftcard_order_status`
 
-## The 4 agent-local tools (level 2 only)
+## The 5 agent-local tools (level 2 only)
 
-`register_account`, `agent_status`, `verify_domain`, `configure_depix_rail` —
-they self-onboard the account on this machine (the Ed25519 keypair stays here,
-see [`../signing/agent-auth.md`](../signing/agent-auth.md)) and toggle its DePix
-direct rail. They are absent from the hosted level because registration is the
+`register_account`, `agent_status`, `verify_domain`, `configure_depix_rail`,
+`activate_key` — they self-onboard the account on this machine (the Ed25519
+keypair stays here, see [`../signing/agent-auth.md`](../signing/agent-auth.md)),
+toggle its DePix direct rail, and switch the account from the sandbox key to the
+live one (`activate_key`, `{ "mode": "live" }` — the choice is saved in the
+encrypted vault and survives restarts). They are absent from the hosted level because registration is the
 one thing an operator's own process must do for itself.
 
 The authoritative lists are `src/server.ts` (the 26 gateway),

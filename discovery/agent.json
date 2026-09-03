@@ -1,8 +1,8 @@
 {
   "name": "DePix App",
   "description": "Non-custodial Pix payment gateway on the Liquid Network. Agents can accept Pix payments (checkouts, products and dated charges), on-ramp BRL to DePix and off-ramp DePix to Pix via REST API. DePix is the BRL stablecoin; DePix App is the gateway service.",
-  "version": "0.5.1",
-  "updated": "2026-08-28",
+  "version": "0.5.2",
+  "updated": "2026-09-03",
   "urls": {
     "website": "https://depixapp.com",
     "docs_html": "https://depixapp.com/docs/en/",
@@ -76,7 +76,7 @@
       "diagnostics",
       "recover"
     ],
-    "mcp_server": "Do NOT run this package as an MCP server. The wallet tools (wallet_convert, wallet_quote, wallet_send, …) ship inside `@depixapp/mcp` — run `npx -y @depixapp/mcp` (stdio, 59 tools, first run `npx -y @depixapp/mcp init`). See the `mcp` block.",
+    "mcp_server": "Do NOT run this package as an MCP server. The wallet tools (wallet_convert, wallet_quote, wallet_send, …) ship inside `@depixapp/mcp` — run `npx -y @depixapp/mcp` (stdio, 60 tools, first run `npx -y @depixapp/mcp init`). See the `mcp` block.",
     "install": "npm install @depixapp/sdk",
     "npm": "https://www.npmjs.com/package/@depixapp/sdk",
     "manifest_note": "AGENTS.md (the start-here guide for agents — routing table, units, examples) ships inside the npm tarball.",
@@ -94,10 +94,10 @@
     "npm": "https://www.npmjs.com/package/@depixapp/mcp",
     "repo": "https://github.com/depixapp/depix-mcp",
     "registry_id": "io.github.depixapp/depix-mcp",
-    "summary": "ONE MCP server with TWO levels of access — not two products. `@depixapp/mcp` registers 59 tools. Connected to the DePix App-hosted endpoint it exposes the keyless 26 (receive side). Run by the operator over stdio with a seed, the same package exposes all 59 — the extra 33 being the 29 `wallet_*` tools that hold, sign and move funds plus 4 agent-local tools (register_account, agent_status, verify_domain, configure_depix_rail) that self-onboard the account on this machine and toggle its DePix direct rail. The split is custody, not features withheld: signing happens in-process, so whichever process runs a wallet tool IS the seed holder, and DePix App holds no seeds.",
+    "summary": "ONE MCP server with TWO levels of access — not two products. `@depixapp/mcp` registers 60 tools. Connected to the DePix App-hosted endpoint it exposes the keyless 26 (receive side). Run by the operator over stdio with a seed, the same package exposes all 60 — the extra 34 being the 29 `wallet_*` tools that hold, sign and move funds plus 5 agent-local tools (register_account, agent_status, verify_domain, configure_depix_rail, activate_key) that self-onboard the account on this machine, toggle its DePix direct rail and switch it to live. The split is custody, not features withheld: signing happens in-process, so whichever process runs a wallet tool IS the seed holder, and DePix App holds no seeds.",
     "levels": [
       "1 — hosted (mcp.depixapp.com, keyless, 26 tools, receive)",
-      "2 — local (npx -y @depixapp/mcp, operator's seed, 59 tools, full wallet)"
+      "2 — local (npx -y @depixapp/mcp, operator's seed, 60 tools, full wallet)"
     ],
     "gateway": {
       "level": 1,
@@ -109,7 +109,7 @@
       "tool_count": 26,
       "tool_count_merchant": 20,
       "tool_count_support": 6,
-      "summary": "Twenty-six tools over this REST API. Twenty are merchant side — this server reads and creates checkouts and products but never creates deposits or withdrawals, so it cannot move funds on its own. The other six are support-ticket tools (open, get, list, reply, close a support ticket, and attach a file to one). This deployment holds no seed, so the 29 `wallet_*` tools are structurally absent from it, and so are the 4 agent-local tools (the hosted catalog never offers account registration)."
+      "summary": "Twenty-six tools over this REST API. Twenty are merchant side — this server reads and creates checkouts and products but never creates deposits or withdrawals, so it cannot move funds on its own. The other six are support-ticket tools (open, get, list, reply, close a support ticket, and attach a file to one). This deployment holds no seed, so the 29 `wallet_*` tools are structurally absent from it, and so are the 5 agent-local tools (the hosted catalog never offers account registration)."
     },
     "wallet": {
       "level": 2,
@@ -119,9 +119,9 @@
       "binary": "depix-mcp",
       "transport": "stdio",
       "init_command": "npx -y @depixapp/mcp init",
-      "tool_count_full": 59,
+      "tool_count_full": 60,
       "tool_count_wallet": 29,
-      "tool_count_local": 4,
+      "tool_count_local": 5,
       "environment_variables": {
         "DEPIX_API_KEY": "required for the 26 gateway tools — sk_test_ / sk_live_.",
         "DEPIX_WALLET_PASSPHRASE": "unlocks the seed created by `init` for the 29 wallet tools. Usually unnecessary — `init` stores the unlock key in the OS keychain — but still honoured when set. With no wallet at all, the wallet tools stay listed and return a typed `wallet_not_configured` error naming `npx -y @depixapp/mcp init`.",
@@ -129,7 +129,7 @@
       },
       "first_run": "`npx -y @depixapp/mcp init` — a TTY-only human ceremony that creates or restores the wallet, sets the spending guardrails, and registers the server with the AI hosts found on that machine, so no `mcpServers` block has to be pasted by hand (printing one is the fallback). It asks for no API key and never writes the passphrase into a host config: the OS keychain holds the unlock key, and the agent opens its own account later with `register_account`. Seed creation is deliberately NOT an MCP tool: the mnemonic must never transit model context or conversation logs.",
       "transport_safety": "stdio is the only default-safe transport for this level. The server loads the seed process-wide and carries no auth of its own; exposing it over HTTP without operator-provided auth + network isolation lets anyone who reaches the port drain the wallet.",
-      "summary": "The same server, run where the agent lives, holding the operator's seed. Adds 29 `wallet_*` tools (balances, addresses, Pix on/off-ramp, send, convert, Lightning, gift cards, guardrails, recovery, utxos, sync) that MOVE FUNDS, signed in-process on the operator's machine, plus 4 agent-local tools (register_account, agent_status, verify_domain, configure_depix_rail) for 59 total. Non-custodial: the seed never leaves it."
+      "summary": "The same server, run where the agent lives, holding the operator's seed. Adds 29 `wallet_*` tools (balances, addresses, Pix on/off-ramp, send, convert, Lightning, gift cards, guardrails, recovery, utxos, sync) that MOVE FUNDS, signed in-process on the operator's machine, plus 5 agent-local tools (register_account, agent_status, verify_domain, configure_depix_rail, activate_key) for 60 total. Non-custodial: the seed never leaves it."
     }
   },
   "agent_onboarding": {
