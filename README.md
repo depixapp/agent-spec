@@ -17,7 +17,7 @@ the non-custodial Pix↔DePix payment gateway on the Liquid Network.
 | Machine-readable API schema | <https://api.depixapp.com/openapi.json> (OpenAPI 3.1) |
 | Agent quickstart / discovery | <https://depixapp.com/llms.txt> · <https://depixapp.com/.well-known/agent.json> |
 | Human API reference | <https://depixapp.com/docs/en/> |
-| MCP server (one server, two levels — 26 hosted / 60 local) | <https://github.com/depixapp/depix-mcp> |
+| MCP server (one server, two levels — 26 hosted / 62 local) | <https://github.com/depixapp/depix-mcp> |
 
 ## What lives here (and nowhere else)
 

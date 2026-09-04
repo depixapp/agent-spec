@@ -122,8 +122,8 @@ the agent needs a key to the money:
   **cannot move funds** — this deployment holds no seed, so the `wallet_*`
   tools are structurally absent from it.
 - **Level 2 — local.** `npx -y @depixapp/mcp` over stdio, run where the agent
-  lives, **59 tools**. The extra 29 `wallet_*` tools expose the operator's own
+  lives, **62 tools**. The extra 29 `wallet_*` tools expose the operator's own
   non-custodial wallet and **do move funds**, signed in-process with the
-  operator's key; 4 more are agent-local (registration, domain proof, the DePix
-  rail). The guardrails in §1 apply here. First run is
+  operator's key; 7 more are agent-local (registration, domain proof, the DePix
+  rail, and minting or revoking the account's own API keys). The guardrails in §1 apply here. First run is
   `npx -y @depixapp/mcp init`; the seed never leaves that machine.

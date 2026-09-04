@@ -7,7 +7,7 @@ This page is a pointer and a disambiguation.
 ## ONE server, TWO levels of access
 
 There is one DePix MCP server: **`@depixapp/mcp`** (Apache-2.0, registry id
-`io.github.depixapp/depix-mcp`). It registers **60 tools**. Which of them
+`io.github.depixapp/depix-mcp`). It registers **62 tools**. Which of them
 actually work depends on nothing but where the server runs and whether that
 process holds a wallet seed.
 
@@ -17,7 +17,7 @@ process holds a wallet seed.
 | Who runs it | DePix App | the operator, where the agent lives |
 | Transport | Streamable HTTP at `https://mcp.depixapp.com/mcp` (stateless) | stdio — `npx -y @depixapp/mcp` |
 | Seed | **none** | the operator's |
-| Tools | **26** — 20 merchant/gateway + 6 support-ticket | **60** — the same 26 + 29 `wallet_*` + 5 agent-local |
+| Tools | **26** — 20 merchant/gateway + 6 support-ticket | **62** — the same 26 + 29 `wallet_*` + 7 agent-local |
 | Moves funds? | **No** — it cannot create deposits or withdrawals | **Yes** — signed in-process with the operator's key |
 | Auth | OAuth 2.1 connector, or `Authorization: Bearer sk_…` | none to configure — `init` creates the wallet, registers the server with the AI hosts it finds, and stores the unlock key in the OS keychain; the agent opens the account later with `register_account` |
 | Custody | non-custodial (holds nothing) | non-custodial (the operator holds the seed) |
@@ -28,7 +28,7 @@ executes a fund-moving tool **is** the seed holder. DePix App will not hold
 seeds, therefore the hosted deployment can only ever expose the keyless 26 —
 physics, not a product decision. The 29 `wallet_*` tools are structurally
 absent from the hosted build (separate import graph), not merely disabled, and
-so are the 5 agent-local tools — the hosted catalog never offers account
+so are the 7 agent-local tools — the hosted catalog never offers account
 registration.
 
 The hosted level is a **pure client of the public DePix App API** — it holds no
@@ -89,7 +89,7 @@ fallback (a pre-existing key, a headless box with no keychain, CI):
 | `DEPIX_WALLET_DIR` | Optional — where the encrypted wallet lives; defaults to the per-user data directory. |
 
 Without a configured wallet the `wallet_*` tools stay **listed** and return a
-typed `wallet_not_configured` error naming `init`. The catalog is static at 60
+typed `wallet_not_configured` error naming `init`. The catalog is static at 62
 on the local level on purpose: MCP hosts snapshot `tools/list` at connect and
 `list_changed` support is uneven, so a catalog that grew after `init` would
 mean "restart your client".
@@ -129,18 +129,31 @@ sets.
   `wallet_giftcard_price`, `wallet_buy_giftcard`, `wallet_list_giftcard_orders`,
   `wallet_get_giftcard_order_status`
 
-## The 5 agent-local tools (level 2 only)
+## The 7 agent-local tools (level 2 only)
 
 `register_account`, `agent_status`, `verify_domain`, `configure_depix_rail`,
-`activate_key` — they self-onboard the account on this machine (the Ed25519
-keypair stays here, see [`../signing/agent-auth.md`](../signing/agent-auth.md)),
-toggle its DePix direct rail, and switch the account from the sandbox key to the
-live one (`activate_key`, `{ "mode": "live" }` — the choice is saved in the
-encrypted vault and survives restarts). They are absent from the hosted level because registration is the
-one thing an operator's own process must do for itself.
+`activate_key`, `create_key`, `revoke_key` — they self-onboard the account on
+this machine (the Ed25519 keypair stays here, see
+[`../signing/agent-auth.md`](../signing/agent-auth.md)), toggle its DePix direct
+rail, switch the account from the sandbox key to the live one (`activate_key`,
+`{ "mode": "live" }` — the choice is saved in the encrypted vault and survives
+restarts), and mint or revoke keys.
+
+A minted key is sealed in that same vault and never returned: `create_key`
+answers with the id, prefix, scopes and limits, never the `sk_`. `revoke_key`
+is two-phase — phase 1 describes the key and writes nothing, `confirm: true`
+kills it — because revocation is immediate, irreversible, and invisible to the
+operator unless the agent relays it. `verify_domain` mints on its own: proving
+the domain is what lifts `domain_required`, so phase 2 trades the starter key
+for one carrying `merchant_read merchant_write wallet_read wallet_write`,
+activates it, and only then revokes the starter. That order is the guarantee —
+a refused mint leaves the proof standing and the old key working.
+
+They are absent from the hosted level because registration is the one thing an
+operator's own process must do for itself.
 
 The authoritative lists are `src/server.ts` (the 26 gateway),
-`src/agent-tools.ts` (the 5 agent-local) and `src/wallet-engine/mcp/server.ts`
+`src/agent-tools.ts` (the 7 agent-local) and `src/wallet-engine/mcp/server.ts`
 (the 29 `wallet_*`) in `depix-mcp`; the counts here are kept honest by the
 discovery drift guards (see the repo root README).
 
@@ -148,7 +161,7 @@ discovery drift guards (see the repo root README).
 
 - `registry/server.json` — the Model Context Protocol registry manifest (the
   seed for catalog listings). ONE entry: `remotes[]` carries the hosted
-  keyless endpoint, `packages[]` carries the npm package with all 60 tools.
+  keyless endpoint, `packages[]` carries the npm package with all 62 tools.
 - `/.well-known/mcp.json` — served live from the hosted deployment.
 
 The registry schema has no per-remote/per-package tool field, so a client that

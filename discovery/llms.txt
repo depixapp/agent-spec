@@ -47,7 +47,7 @@ Key facts:
 ## MCP server — one server, two levels
 
 There is ONE DePix MCP server, **`@depixapp/mcp`** (Apache-2.0, registry id
-`io.github.depixapp/depix-mcp`). It registers **60 tools**. Which of them work
+`io.github.depixapp/depix-mcp`). It registers **62 tools**. Which of them work
 depends only on where it runs and whether that process holds a wallet seed:
 
 - **Level 1 — hosted, 26 tools, receive.** `https://mcp.depixapp.com/mcp`
@@ -58,12 +58,12 @@ depends only on where it runs and whether that process holds a wallet seed:
   support-ticket tools (open, get, list, reply, close a support ticket, and
   attach a file to one). This deployment holds no seed, so the 29 `wallet_*`
   tools are structurally absent from it.
-- **Level 2 — local, 60 tools, the full wallet.** `npx -y @depixapp/mcp` over
+- **Level 2 — local, 62 tools, the full wallet.** `npx -y @depixapp/mcp` over
   stdio, run where the agent lives. Same 26 tools plus 29 `wallet_*` tools that
   hold, sign and MOVE FUNDS: balances and addresses, Pix on/off-ramp, send,
   quote/convert, cross-network stablecoin shifts, Lightning pay/receive (settled
   through Boltz swaps, not a native DePix Lightning rail), gift cards,
-  guardrails, recovery and diagnostics — plus 5 agent-local tools
+  guardrails, recovery and diagnostics — plus 7 agent-local tools
   (register_account, agent_status, verify_domain, configure_depix_rail,
   activate_key) that self-onboard the account on this machine, toggle its DePix
   direct rail and switch it to live.
